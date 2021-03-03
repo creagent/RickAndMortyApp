@@ -10,7 +10,7 @@ import UIKit
 
 
 class DetailViewController: UIViewController {
-
+    
     @IBOutlet weak var nameLabel: UILabel!
     
     @IBOutlet weak var imageView: UIImageView!
@@ -23,17 +23,23 @@ class DetailViewController: UIViewController {
     
     var character: CharacterModel?
     
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let url = URL(string: character?.imageUrl ?? "")!
-        imageView.load(url: url)
-        nameLabel.text = character?.name
-        statusLabel.text = character?.status
-        locationLabel.text = character?.location
-        episodeLabel.text = character?.firstEpisode
+        
+        guard let character = character  else {
+            return
+        }
+        
+        if let url = URL(string: character.imageUrl) {
+            imageView.load(url: url)
+        }
+        
+        nameLabel.text = character.name
+        statusLabel.text = character.status
+        locationLabel.text = character.location
+        episodeLabel.text = character.firstEpisode
     }
 }
 

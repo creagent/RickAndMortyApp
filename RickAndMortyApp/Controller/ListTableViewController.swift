@@ -121,7 +121,7 @@ class ListTableViewController: UITableViewController {
                 
                 for i in self.characters.indices {
                     var character = self.characters[i]
-                    character.firstEpisode = self.urlToEpisodeNameDict[character.firstEpisode]!
+                    character.firstEpisode = self.urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
                     self.characters[i] = character
                 }
                 
@@ -177,19 +177,23 @@ class ListTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ListTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
-        var character: CharacterModel
-        
-        if isFiltering {
-            character = filteredCharacters[indexPath.row]
+        if let characterCell = cell as? ListTableViewCell {
+            var character: CharacterModel
+            
+            if isFiltering {
+                character = filteredCharacters[indexPath.row]
+            }
+            else {
+                character = characters[indexPath.row]
+            }
+            
+            characterCell.accessoryType = .disclosureIndicator
+            characterCell.setData(for: character)
+            
+            return characterCell
         }
-        else {
-            character = characters[indexPath.row]
-        }
-        
-        cell.accessoryType = .disclosureIndicator
-        cell.setData(for: character)
         
         return cell
     }
@@ -209,8 +213,8 @@ class ListTableViewController: UITableViewController {
                 character = characters[indexPath.row]
             }
             
-            let destinationVC = segue.destination as! DetailViewController
-            destinationVC.character = character
+            let destinationVC = segue.destination as? DetailViewController
+            destinationVC?.character = character
         }
     }
 }
@@ -221,7 +225,7 @@ class ListTableViewController: UITableViewController {
 
 extension ListTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchText(searchController.searchBar.text!)
+        filterContentForSearchText(searchController.searchBar.text ?? "")
     }
     
     private func filterContentForSearchText(_ searchText: String) {
