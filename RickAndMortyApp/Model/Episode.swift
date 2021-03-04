@@ -95,7 +95,7 @@ struct Episode {
         }
     }
     
-    func getEpisodesByPageNumber(pageNumber: Int, completion: @escaping (Result<[EpisodeModel], Error>) -> Void) {
+    private func getEpisodesByPageNumber(pageNumber: Int, completion: @escaping (Result<[EpisodeModel], Error>) -> Void) {
         NetworkManager.requestByMethod(method: "episode/"+"?page="+String(pageNumber)) {
             result in switch result {
             case .success(let data):

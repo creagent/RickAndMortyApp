@@ -15,6 +15,8 @@ class ListTableViewController: UITableViewController {
     
     private var characters: [CharacterModel] = []
     
+    private let JSON_FILE_NAME = "characters.json"
+    
     private var urlToEpisodeNameDict: [String: String] = [:]
     
     // MARK: - Searchbar properties
@@ -83,7 +85,7 @@ class ListTableViewController: UITableViewController {
                     return
                 }
                 
-                self.client.character().loadCharacterListFromFile(fileName: "characters.dat") {
+                self.client.character().loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
                     [weak self] in switch $0 {
                     case .success(let characterList):
                         guard let self = self else {
@@ -127,7 +129,7 @@ class ListTableViewController: UITableViewController {
                 
                 self.tableView.reloadData()
                 
-                self.client.character().saveCharcterListToFile(characters: self.characters, fileName: "characters.dat")
+                self.client.character().saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
                 
             case .failure(let error):
                 print(error)

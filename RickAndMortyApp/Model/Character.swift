@@ -98,7 +98,7 @@ struct Character {
     }
     
     // Gets all (20) characters from page with given number
-    func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
+    private func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
         NetworkManager.requestByMethod(method: "character/"+"?page="+String(pageNumber)) {
             switch $0 {
             case .success(let data):
