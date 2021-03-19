@@ -54,6 +54,8 @@ struct CharacterData: Decodable {
 // it from/to file
 struct Character {
     
+    // MARK: - Public
+    
     init(client: Client) {}
     
     func getAllCharacters(completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
@@ -97,6 +99,17 @@ struct Character {
         }
     }
     
+    func loadCharacterListFromFile(fileName: String, completion: @escaping (Result<CharacterListModel, Error>) -> Void) {
+        FileSystemManager.loadFromFile(fileName: fileName, completion: completion)
+    }
+    
+    func saveCharcterListToFile(characters: [CharacterModel], fileName: String) {
+        let characterList = CharacterListModel(characters: characters)
+        FileSystemManager.saveToFile(data: characterList, fileName: fileName)
+    }
+    
+    // MARK: - Private functions
+    
     // Gets all (20) characters from page with given number
     private func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
         NetworkManager.requestByMethod(method: "character/"+"?page="+String(pageNumber)) {
@@ -110,15 +123,6 @@ struct Character {
                 completion(.failure(error))
             }
         }
-    }
-    
-    func loadCharacterListFromFile(fileName: String, completion: @escaping (Result<CharacterListModel, Error>) -> Void) {
-        FileSystemManager.loadFromFile(fileName: fileName, completion: completion)
-    }
-    
-    func saveCharcterListToFile(characters: [CharacterModel], fileName: String) {
-        let characterList = CharacterListModel(characters: characters)
-        FileSystemManager.saveToFile(data: characterList, fileName: fileName)
     }
 }
 

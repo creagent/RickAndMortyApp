@@ -11,6 +11,8 @@ import Foundation
 // Helper struct that handles JSON coding/decoding
 struct JSONHandler {
     
+    // MARK: - Public
+    
     static func decodeJSONData<T: Decodable>(data: Data) -> T? {
         let decoder = JSONDecoder()
         

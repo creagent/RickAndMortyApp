@@ -11,6 +11,8 @@ import Foundation
 // Struct for managing JSON read/write file operations
 struct FileSystemManager {
     
+    // MARK: - Public
+    
     static func loadFromFile<T: Decodable>(fileName: String, completion: @escaping (Result<T, Error>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             let fileManager = FileManager.default

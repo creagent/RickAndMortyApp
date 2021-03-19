@@ -28,11 +28,12 @@ struct Info: Decodable {
 
 // Struct for managing network requests
 struct NetworkManager {
-    private static let BASE_API_URL: String = "https://rickandmortyapi.com/api/"
+    
+    // MARK: - Public
     
     static func requestByMethod(method: String, completion: @escaping (Result<Data, NetworkManagerError>) -> Void) {
         if let url = URL(string: BASE_API_URL + method) {
-            let urlSession = URLSession.shared
+            let urlSession = URLSession.init(configuration: .ephemeral)
             
             urlSession.dataTask(with: url) {
                 switch $0 {
@@ -56,7 +57,7 @@ struct NetworkManager {
     
     static func requestByUrl(url: String, completion: @escaping (Result<Data, NetworkManagerError>) -> Void) {
         if let url = URL(string: url) {
-            let urlSession = URLSession.shared
+            let urlSession = URLSession.init(configuration: .ephemeral)
             
             urlSession.dataTask(with: url) {
                 switch $0 {
@@ -77,6 +78,10 @@ struct NetworkManager {
             completion(.failure(.invalidURL))
         }
     }
+    
+    // MARK: - Private constants
+    
+    private static let BASE_API_URL: String = "https://rickandmortyapi.com/api/"
 }
 
 

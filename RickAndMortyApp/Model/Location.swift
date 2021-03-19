@@ -33,6 +33,8 @@ struct LocationModel: Codable {
 // Struct contains methods to request location information
 struct Location {
     
+    // MARK: - Public
+    
     init(client: Client) {}
     
     func getLocationByURL(url: String, completion: @escaping (Result<LocationModel, Error>) -> Void) {

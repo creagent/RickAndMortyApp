@@ -43,6 +43,8 @@ struct EpisodeModel: Decodable, Identifiable {
 // Struct contains methods to request episode information
 struct Episode {
     
+    // MARK: - Public
+    
     init(client: Client) {}
     
     func getEpisodeByURL(url: String, completion: @escaping (Result<EpisodeModel, Error>) -> Void) {
@@ -94,6 +96,8 @@ struct Episode {
             }
         }
     }
+    
+    // MARK: - Private functions
     
     private func getEpisodesByPageNumber(pageNumber: Int, completion: @escaping (Result<[EpisodeModel], Error>) -> Void) {
         NetworkManager.requestByMethod(method: "episode/"+"?page="+String(pageNumber)) {

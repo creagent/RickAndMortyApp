@@ -9,17 +9,21 @@ import UIKit
 
 
 
-class ListTableViewCell: UITableViewCell {
+class CharacterListTVCell: UITableViewCell {
     
-    @IBOutlet weak var nameLabel: UILabel!
+    // MARK: - IBOutlets
     
-    @IBOutlet weak var locationLabel: UILabel!
+    @IBOutlet weak private var nameLabel: UILabel!
     
-    @IBOutlet weak var episodeLabel: UILabel!
+    @IBOutlet weak private var locationLabel: UILabel!
     
-    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak private var episodeLabel: UILabel!
+    
+    @IBOutlet weak private var statusLabel: UILabel!
 
     
+    
+    // MARK: - Public
     
     func setData(for character: CharacterModel) {
         nameLabel.text = character.name
