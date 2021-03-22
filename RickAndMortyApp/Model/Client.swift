@@ -7,12 +7,8 @@
 
 import Foundation
 
-
-
 struct Client {
-    
     // MARK: - Public
-    
     func character() -> Character {
         let character = Character(client: self)
         return character

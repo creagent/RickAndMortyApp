@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // Struct for storing character list in file
 struct CharacterListModel: Codable {
     let characters: [CharacterModel]
@@ -30,8 +29,6 @@ struct CharacterModel: Codable {
     }
 }
 
-
-
 // Struct for decoding character's json representation
 struct CharacterData: Decodable {
     let id: Int
@@ -48,18 +45,13 @@ struct CharacterData: Decodable {
     let created: String
 }
 
-
-
 // Struct contains methods to request character information from API and loading/saving
 // it from/to file
 struct Character {
-    
     // MARK: - Public
-    
     init(client: Client) {}
     
     func getAllCharacters(completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
-        
         var allCharacters = [CharacterModel]()
         NetworkManager.requestByMethod(method: "character") {
             switch $0 {
@@ -68,12 +60,9 @@ struct Character {
                     infoModel.results.forEach {
                         character in allCharacters.append(CharacterModel(from: character))
                     }
-                    
                     let charactersDispatchGroup = DispatchGroup()
-                    
                     for index in 2...infoModel.info.pages {
                         charactersDispatchGroup.enter()
-                        
                         self.getCharactersByPageNumber(pageNumber: index) {
                             switch $0 {
                             case .success(let characters):
@@ -81,18 +70,15 @@ struct Character {
                                     character in allCharacters.append(CharacterModel(from: character))
                                 }
                                 charactersDispatchGroup.leave()
-                                
                             case .failure(let error):
                                 completion(.failure(error))
                             }
                         }
                     }
-                    
                     charactersDispatchGroup.notify(queue: .main) {
                         completion(.success(allCharacters))
                     }
                 }
-                
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -109,7 +95,6 @@ struct Character {
     }
     
     // MARK: - Private functions
-    
     // Gets all (20) characters from page with given number
     private func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
         NetworkManager.requestByMethod(method: "character/"+"?page="+String(pageNumber)) {
@@ -118,7 +103,6 @@ struct Character {
                 if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
                     completion(.success(infoModel.results))
                 }
-                
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -126,23 +110,17 @@ struct Character {
     }
 }
 
-
-
 // Struct for representing character list response
 struct CharacterInfoModel: Decodable {
     let info: Info
     let results: [CharacterData]
 }
 
-
-
 // Struct for decoding character's origin json info
 struct CharacterOriginModel: Decodable {
     let name: String
     let url: String
 }
-
-
 
 // Struct for decoding character's location json info
 struct CharacterLocationModel: Decodable {

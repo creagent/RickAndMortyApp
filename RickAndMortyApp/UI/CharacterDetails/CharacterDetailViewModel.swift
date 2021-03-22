@@ -8,36 +8,34 @@
 import Foundation
 import UIKit
 
-class CharacterDetailViewModel: CharacterDetailDelegate {
-    
+protocol CharacterDetailViewModelDelegate: class {
+    func didLoadCharacterImage(image: UIImage)
+}
+
+class CharacterDetailViewModel {
     // MARK: - Public
-    
     init(character: CharacterModel) {
         self.character = character
     }
     
+    weak var delegate: CharacterDetailViewModelDelegate?
+    
     func setCharacterImage(for imageView: UIImageView) {
         if let url = URL(string: character.imageUrl) {
-            imageView.load(url: url)
+            loadCharacterImage(url: url)
         }
     }
     
     // MARK: - Readonly
-    
     private(set) var character: CharacterModel
-}
-
-
-
-extension UIImageView {
-    func load(url: URL) {
+    
+    // MARK: - Private functions
+    func loadCharacterImage(url: URL) {
         DispatchQueue.global().async {
             [weak self] in
             if let data = try? Data(contentsOf: url) {
                 if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
+                    self?.delegate?.didLoadCharacterImage(image: image)
                 }
             }
         }

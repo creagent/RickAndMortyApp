@@ -7,15 +7,11 @@
 
 import Foundation
 
-
-
 // Struct for representing location list response
 struct LocationInfoModel: Decodable {
     let info: Info
     let results: [LocationModel]
 }
-
-
 
 // Struct for decoding character location's json representation
 struct LocationModel: Codable {
@@ -28,13 +24,9 @@ struct LocationModel: Codable {
     let created: String
 }
 
-
-
 // Struct contains methods to request location information
 struct Location {
-    
     // MARK: - Public
-    
     init(client: Client) {}
     
     func getLocationByURL(url: String, completion: @escaping (Result<LocationModel, Error>) -> Void) {
@@ -43,8 +35,7 @@ struct Location {
             case .success(let data):
                 if let location: LocationModel = JSONHandler.decodeJSONData(data: data) {
                     completion(.success(location))
-                }
-                
+                } 
             case .failure(let error):
                 completion(.failure(error))
             }

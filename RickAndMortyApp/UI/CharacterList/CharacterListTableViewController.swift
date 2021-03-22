@@ -7,12 +7,8 @@
 
 import UIKit
 
-
-
 class CharacterListTVController: UITableViewController {
-    
     // MARK: - UITableViewDataSource
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -21,38 +17,31 @@ class CharacterListTVController: UITableViewController {
         if isFiltering {
             return viewModel.filteredCharacters.count
         }
-        
         return viewModel.characters.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        
-        if let characterCell = cell as? CharacterListTVCell {
+        if let characterCell = cell as? CharacterListTableViewCell {
             var character: CharacterModel
-            
             if isFiltering {
                 character = viewModel.filteredCharacters[indexPath.row]
             }
             else {
                 character = viewModel.characters[indexPath.row]
             }
-            
             characterCell.accessoryType = .disclosureIndicator
             characterCell.setData(for: character)
             
             return characterCell
         }
-        
         return cell
     }
     
     // MARK: - View lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.refreshControl = myRefreshControl
+        tableView.refreshControl = listRefreshControl
         
         bindToViewModel()
         viewModel.refreshCharacterList()
@@ -66,39 +55,27 @@ class CharacterListTVController: UITableViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    // MARK: - Navigation
-    
+    // MARK: - Navigation    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             guard let indexPath = tableView.indexPathForSelectedRow else {
                 return
             }
-            
-            var character: CharacterModel
-            if isFiltering {
-                character = viewModel.filteredCharacters[indexPath.row]
-            } else {
-                character = viewModel.characters[indexPath.row]
-            }
-            
-            let destinationVC = segue.destination as? CharacterDetailVController
-            destinationVC?.viewModel = CharacterDetailViewModel(character: character)
+            let destinationVC = segue.destination as? CharacterDetailViewController
+            destinationVC?.viewModel = viewModel.characterDetailViewModel(atIndex: indexPath.row)
         }
     }
     
     // MARK: - Private constants
-    
     private let viewModel = CharacterListViewModel()
     
     private let searchController = UISearchController(searchResultsController: nil)
     
     // MARK: - Private
-    
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else {
             return false
         }
-        
         return text.isEmpty
     }
     
@@ -107,14 +84,12 @@ class CharacterListTVController: UITableViewController {
             tableView.refreshControl = nil
         }
         else {
-            tableView.refreshControl = myRefreshControl
+            tableView.refreshControl = listRefreshControl
         }
-        
         return searchController.isActive && !searchBarIsEmpty
     }
     
     // MARK: - Private functions
-    
     private func bindToViewModel() {
         viewModel.didUpdate = {
             [weak self] in
@@ -122,12 +97,16 @@ class CharacterListTVController: UITableViewController {
                 self?.tableView.reloadData()
             }
         }
-        
         viewModel.didFailInternetConnection = {
             [weak self] in
             DispatchQueue.main.async {
                 self?.showNoInternetConnectionAlert()
             }
+        }
+        
+        viewModel.isFiltering = {
+            [weak self] in
+            return self?.isFiltering ?? false
         }
     }
     
@@ -136,19 +115,17 @@ class CharacterListTVController: UITableViewController {
             let dialogMessage = UIAlertController(title: "Can't refresh right now", message: "Make sure your device is connected to the internet", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default)
             dialogMessage.addAction(ok)
-            
             self.present(dialogMessage, animated: true)
         }
     }
     
     // MARK: - Refreshing
-    
     @objc private func refresh(sender: UIRefreshControl) {
         viewModel.refreshCharacterList()
         sender.endRefreshing()
     }
     
-    private let myRefreshControl: UIRefreshControl = {
+    private let listRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         let title = NSLocalizedString("Wait a second", comment: "Pull to refresh")
         refreshControl.attributedTitle = NSAttributedString(string: title)
@@ -158,10 +135,7 @@ class CharacterListTVController: UITableViewController {
     }()
 }
 
-
-
 // MARK: - UISearchResultsUpdating
-
 extension CharacterListTVController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchController.searchBar.text ?? "")
