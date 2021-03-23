@@ -26,10 +26,25 @@ class CharacterDetailViewModel {
         }
     }
     
-    // MARK: - Readonly
-    private(set) var character: CharacterModel
+    var characterName: String {
+        return character.name
+    }
+    
+    var characterLocation: String {
+        return character.location
+    }
+    
+    var characterFirstEpisode: String {
+        return character.firstEpisode
+    }
+    
+    var characterStatus: String {
+        return character.status
+    }
     
     // MARK: - Private functions
+    private var character: CharacterModel
+
     func loadCharacterImage(url: URL) {
         DispatchQueue.global().async {
             [weak self] in

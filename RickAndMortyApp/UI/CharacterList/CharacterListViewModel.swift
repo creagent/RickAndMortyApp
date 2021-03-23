@@ -13,9 +13,7 @@ class CharacterListViewModel {
     
     var didFailInternetConnection: (() -> Void)?
     
-    var isFiltering: (() -> Bool) = {
-        return false
-    }
+    var isFiltering: Bool = false
     
     func filterCharacters(searchText: String) {
         filteredCharacters = characters.filter {
@@ -23,10 +21,33 @@ class CharacterListViewModel {
         }
     }
     
+    func locationText(forCharacterAtIndex index: Int) -> String {
+        return isFiltering ? filteredCharacters[index].location : characters[index].location
+    }
+    
+    func nameText(forCharacterAtIndex index: Int) -> String {
+        return isFiltering ? filteredCharacters[index].name : characters[index].name
+    }
+    
+    func firstEpisodeText(forCharacterAtIndex index: Int) -> String {
+        return isFiltering ? filteredCharacters[index].firstEpisode : characters[index].firstEpisode
+    }
+    
+    func statusText(forCharacterAtIndex index: Int) -> String {
+        return isFiltering ? filteredCharacters[index].status : characters[index].status
+    }
+    
+    func numberOfCharactersToShow() -> Int {
+        if isFiltering {
+            return filteredCharacters.count
+        }
+        return characters.count
+    }
+    
     func characterDetailViewModel(atIndex index: Int) -> CharacterDetailViewModel {
         var character: CharacterModel
 
-        if isFiltering() {
+        if isFiltering {
             character = filteredCharacters[index]
         } else {
             character = characters[index]

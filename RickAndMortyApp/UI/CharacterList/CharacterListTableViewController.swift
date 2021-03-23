@@ -14,24 +14,19 @@ class CharacterListTVController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltering {
-            return viewModel.filteredCharacters.count
-        }
-        return viewModel.characters.count
+        return viewModel.numberOfCharactersToShow()
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         if let characterCell = cell as? CharacterListTableViewCell {
-            var character: CharacterModel
-            if isFiltering {
-                character = viewModel.filteredCharacters[indexPath.row]
-            }
-            else {
-                character = viewModel.characters[indexPath.row]
-            }
+            let index = indexPath.row
+            characterCell.nameText = viewModel.nameText(forCharacterAtIndex: index)
+            characterCell.locationText = viewModel.locationText(forCharacterAtIndex: index)
+            characterCell.firstEpisodeText = viewModel.firstEpisodeText(forCharacterAtIndex: index)
+            characterCell.statusText = viewModel.statusText(forCharacterAtIndex: index)
+            characterCell.setData()
             characterCell.accessoryType = .disclosureIndicator
-            characterCell.setData(for: character)
             
             return characterCell
         }
@@ -103,11 +98,6 @@ class CharacterListTVController: UITableViewController {
                 self?.showNoInternetConnectionAlert()
             }
         }
-        
-        viewModel.isFiltering = {
-            [weak self] in
-            return self?.isFiltering ?? false
-        }
     }
     
     private func showNoInternetConnectionAlert() {
@@ -138,6 +128,7 @@ class CharacterListTVController: UITableViewController {
 // MARK: - UISearchResultsUpdating
 extension CharacterListTVController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
+        viewModel.isFiltering = searchController.searchBar.text?.count ?? 0 > 0
         filterContentForSearchText(searchController.searchBar.text ?? "")
     }
     

@@ -29,10 +29,10 @@ class CharacterDetailViewController: UIViewController {
             return
         }
         viewModel.setCharacterImage(for: imageView)
-        nameLabel.text = viewModel.character.name
-        statusLabel.text = viewModel.character.status
-        locationLabel.text = viewModel.character.location
-        episodeLabel.text = viewModel.character.firstEpisode
+        nameLabel.text = viewModel.characterName
+        statusLabel.text = viewModel.characterStatus
+        locationLabel.text = viewModel.characterLocation
+        episodeLabel.text = viewModel.characterFirstEpisode
     }
 }
 
