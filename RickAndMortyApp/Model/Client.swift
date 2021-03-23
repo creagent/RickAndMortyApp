@@ -9,18 +9,18 @@ import Foundation
 
 struct Client {
     // MARK: - Public
-    func character() -> Character {
-        let character = Character(client: self)
+    func character() -> CharacterAPIManager {
+        let character = CharacterAPIManager(client: self)
         return character
     }
     
-    func episode() -> Episode {
-        let episode = Episode(client: self)
+    func episode() -> EpisodeAPIManager {
+        let episode = EpisodeAPIManager(client: self)
         return episode
     }
     
-    func location() -> Location {
-        let location = Location(client: self)
+    func location() -> LocationAPIManager {
+        let location = LocationAPIManager(client: self)
         return location
     }
 }

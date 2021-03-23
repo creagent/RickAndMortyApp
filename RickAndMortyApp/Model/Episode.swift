@@ -35,7 +35,7 @@ struct EpisodeModel: Decodable, Identifiable {
 }
 
 // Struct contains methods to request episode information
-struct Episode {
+struct EpisodeAPIManager {
     // MARK: - Public
     init(client: Client) {}
     

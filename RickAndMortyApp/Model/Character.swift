@@ -47,7 +47,7 @@ struct CharacterData: Decodable {
 
 // Struct contains methods to request character information from API and loading/saving
 // it from/to file
-struct Character {
+struct CharacterAPIManager {
     // MARK: - Public
     init(client: Client) {}
     

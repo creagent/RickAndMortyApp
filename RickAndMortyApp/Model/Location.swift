@@ -25,7 +25,7 @@ struct LocationModel: Codable {
 }
 
 // Struct contains methods to request location information
-struct Location {
+struct LocationAPIManager {
     // MARK: - Public
     init(client: Client) {}
     

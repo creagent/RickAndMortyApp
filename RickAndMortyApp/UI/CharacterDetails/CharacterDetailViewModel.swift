@@ -20,9 +20,12 @@ class CharacterDetailViewModel {
     
     weak var delegate: CharacterDetailViewModelDelegate?
     
-    func setCharacterImage(for imageView: UIImageView) {
+    func setCharacterImage() {
         if let url = URL(string: character.imageUrl) {
-            loadCharacterImage(url: url)
+            ImageService.loadImage(fromUrl: url) {
+                [weak self] image in
+                self?.delegate?.didLoadCharacterImage(image: image)
+            }
         }
     }
     
@@ -42,17 +45,6 @@ class CharacterDetailViewModel {
         return character.status
     }
     
-    // MARK: - Private functions
+    // MARK: - Private
     private var character: CharacterModel
-
-    func loadCharacterImage(url: URL) {
-        DispatchQueue.global().async {
-            [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    self?.delegate?.didLoadCharacterImage(image: image)
-                }
-            }
-        }
-    }
 }
