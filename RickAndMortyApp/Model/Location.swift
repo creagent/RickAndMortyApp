@@ -23,22 +23,3 @@ struct LocationModel: Codable {
     let url: String
     let created: String
 }
-
-// Struct contains methods to request location information
-struct LocationAPIManager {
-    // MARK: - Public
-    init(client: Client) {}
-    
-    func getLocationByURL(url: String, completion: @escaping (Result<LocationModel, Error>) -> Void) {
-        NetworkManager.requestByUrl(url: url) {
-            switch $0 {
-            case .success(let data):
-                if let location: LocationModel = JSONHandler.decodeJSONData(data: data) {
-                    completion(.success(location))
-                } 
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-}
