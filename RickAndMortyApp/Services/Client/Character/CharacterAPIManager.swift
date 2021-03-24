@@ -61,19 +61,4 @@ struct CharacterAPIManager {
             }
         }
     }
-    
-    // MARK: - Private functions
-    // Gets all (20) characters from page with given number
-//    private func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
-//        NetworkManager.requestByMethod(method: "character/"+"?page="+String(pageNumber)) {
-//            switch $0 {
-//            case .success(let data):
-//                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
-//                    completion(.success(infoModel.results))
-//                }
-//            case .failure(let error):
-//                completion(.failure(error))
-//            }
-//        }
-//    }
 }

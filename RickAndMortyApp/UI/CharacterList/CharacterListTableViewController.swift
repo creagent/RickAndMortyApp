@@ -95,7 +95,6 @@ class CharacterListTVController: UITableViewController {
                 self?.tableView.reloadData()
             }
         }
-        
         viewModel.didUpdate = {
             [weak self] in
             DispatchQueue.main.async {

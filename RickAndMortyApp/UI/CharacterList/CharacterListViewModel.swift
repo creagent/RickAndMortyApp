@@ -1,13 +1,13 @@
  //
-//  CharacterListViewModel.swift
-//  RickAndMortyApp
-//
-//  Created by Антон Алексеев on 19.03.2021.
-//
-
-import Foundation
-
-class CharacterListViewModel {
+ //  CharacterListViewModel.swift
+ //  RickAndMortyApp
+ //
+ //  Created by Антон Алексеев on 19.03.2021.
+ //
+ 
+ import Foundation
+ 
+ class CharacterListViewModel {
     // MARK: - Public
     var didUpdate: (() -> Void)?
     
@@ -48,7 +48,7 @@ class CharacterListViewModel {
     
     func characterDetailViewModel(atIndex index: Int) -> CharacterDetailViewModel {
         var character: CharacterModel
-
+        
         if isFiltering {
             character = filteredCharacters[index]
         } else {
@@ -58,6 +58,7 @@ class CharacterListViewModel {
     }
     
     func loadNextPageCharacters() {
+        refreshDispatchGroup.enter()
         numberOfPagesShowing += 1
         self.characterAPIManager.getCharactersByPageNumber(pageNumber: numberOfPagesShowing) {
             [weak self] in switch $0 {
@@ -65,10 +66,11 @@ class CharacterListViewModel {
                 guard let self = self else {
                     return
                 }
-                //self.characters = characters
+                let oldCharactersCount = self.characters.count
                 self.characters += characters
-                self.setEpisodeNameForCharacterList()
-                
+                if oldCharactersCount != 0 {
+                    self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
+                }
                 self.didUpdate?()
                 
             case.failure(let error):
@@ -90,6 +92,7 @@ class CharacterListViewModel {
                 }
                 self.didFailInternetConnection?()
             }
+            self?.refreshDispatchGroup.leave()
         }
     }
     
@@ -98,31 +101,23 @@ class CharacterListViewModel {
         startUpdating?()
         numberOfPagesShowing = 0
         loadNextPageCharacters()
+        refreshDispatchGroup.enter()
+        loadAllEpisodes()
+        refreshDispatchGroup.notify(queue: .global(qos: .userInitiated)) {
+            [weak self] in
+            self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
+        }
     }
     
-    func setEpisodeNameForCharacterList() {
-        self.episodeAPIManager.getAllEpisodes() {
-            [weak self] in switch $0 {
-            case .success(let episodes):
-                guard let self = self else {
-                    return
-                }
-                episodes.forEach {
-                    (item) in self.urlToEpisodeNameDict[item.url] = item.name
-                }
-                for i in self.characters.indices {
-                    var character = self.characters[i]
-                    character.firstEpisode = self.urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
-                    self.characters[i] = character
-                }
-                self.didUpdate?()
-                
-                self.characterFileManager.saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
-            case .failure(let error):
-                print(error)
-                self?.didFailInternetConnection?()
-            }
+    func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
+        for i in fromStartingIndex..<characters.count {
+            var character = characters[i]
+            character.firstEpisode = urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
+            characters[i] = character
         }
+        didUpdate?()
+        
+        characterFileManager.saveCharcterListToFile(characters: characters, fileName: JSON_FILE_NAME)
     }
     
     // MARK: - Readonly
@@ -139,8 +134,29 @@ class CharacterListViewModel {
     
     private let JSON_FILE_NAME = "characters.json"
     
+    private let refreshDispatchGroup = DispatchGroup()
+    
     // MARK: - Private
     private var urlToEpisodeNameDict: [String: String] = [:]
     
     private var numberOfPagesShowing = 0
-}
+    
+    // MARK: - Private functions
+    private func loadAllEpisodes() {
+        self.episodeAPIManager.getAllEpisodes() {
+            [weak self] in switch $0 {
+            case .success(let episodes):
+                guard let self = self else {
+                    return
+                }
+                episodes.forEach {
+                    (item) in self.urlToEpisodeNameDict[item.url] = item.name
+                }
+            case .failure(let error):
+                print(error)
+                self?.didFailInternetConnection?()
+            }
+            self?.refreshDispatchGroup.leave()
+        }
+    }
+ }
