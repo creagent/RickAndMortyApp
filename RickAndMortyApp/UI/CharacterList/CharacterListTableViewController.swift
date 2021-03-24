@@ -18,6 +18,9 @@ class CharacterListTVController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row == viewModel.numberOfCharactersToShow() - 1 {
+            viewModel.loadNextPageCharacters()
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         if let characterCell = cell as? CharacterListTableViewCell {
             let index = indexPath.row
@@ -86,6 +89,13 @@ class CharacterListTVController: UITableViewController {
     
     // MARK: - Private functions
     private func bindToViewModel() {
+        viewModel.startUpdating = {
+            [weak self] in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+        
         viewModel.didUpdate = {
             [weak self] in
             DispatchQueue.main.async {

@@ -13,6 +13,8 @@ class CharacterListViewModel {
     
     var didFailInternetConnection: (() -> Void)?
     
+    var startUpdating: (() -> Void)?
+    
     var isFiltering: Bool = false
     
     func filterCharacters(searchText: String) {
@@ -55,14 +57,16 @@ class CharacterListViewModel {
         return CharacterDetailViewModel(character: character)
     }
     
-    func refreshCharacterList() {
-        self.characterAPIManager.getAllCharacters {
+    func loadNextPageCharacters() {
+        numberOfPagesShowing += 1
+        self.characterAPIManager.getCharactersByPageNumber(pageNumber: numberOfPagesShowing) {
             [weak self] in switch $0 {
             case .success(let characters):
                 guard let self = self else {
                     return
                 }
-                self.characters = characters
+                //self.characters = characters
+                self.characters += characters
                 self.setEpisodeNameForCharacterList()
                 
                 self.didUpdate?()
@@ -87,6 +91,13 @@ class CharacterListViewModel {
                 self.didFailInternetConnection?()
             }
         }
+    }
+    
+    func refreshCharacterList() {
+        characters = []
+        startUpdating?()
+        numberOfPagesShowing = 0
+        loadNextPageCharacters()
     }
     
     func setEpisodeNameForCharacterList() {
@@ -130,4 +141,6 @@ class CharacterListViewModel {
     
     // MARK: - Private
     private var urlToEpisodeNameDict: [String: String] = [:]
+    
+    private var numberOfPagesShowing = 0
 }

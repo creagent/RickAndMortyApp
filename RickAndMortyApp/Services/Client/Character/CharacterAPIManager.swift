@@ -27,7 +27,7 @@ struct CharacterAPIManager {
                             switch $0 {
                             case .success(let characters):
                                 characters.forEach {
-                                    character in allCharacters.append(CharacterModel(from: character))
+                                    character in allCharacters.append(character)
                                 }
                                 charactersDispatchGroup.leave()
                             case .failure(let error):
@@ -45,18 +45,35 @@ struct CharacterAPIManager {
         }
     }
     
-    // MARK: - Private functions
-    // Gets all (20) characters from page with given number
-    private func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
+    func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
         NetworkManager.requestByMethod(method: "character/"+"?page="+String(pageNumber)) {
             switch $0 {
             case .success(let data):
                 if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    completion(.success(infoModel.results))
+                    var characters: [CharacterModel] = []
+                    infoModel.results.forEach {
+                        character in characters.append(CharacterModel(from: character))
+                    }
+                    completion(.success(characters))
                 }
             case .failure(let error):
                 completion(.failure(error))
             }
         }
     }
+    
+    // MARK: - Private functions
+    // Gets all (20) characters from page with given number
+//    private func getCharactersByPageNumber(pageNumber: Int, completion: @escaping (Result<[CharacterData], Error>) -> Void) {
+//        NetworkManager.requestByMethod(method: "character/"+"?page="+String(pageNumber)) {
+//            switch $0 {
+//            case .success(let data):
+//                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
+//                    completion(.success(infoModel.results))
+//                }
+//            case .failure(let error):
+//                completion(.failure(error))
+//            }
+//        }
+//    }
 }
