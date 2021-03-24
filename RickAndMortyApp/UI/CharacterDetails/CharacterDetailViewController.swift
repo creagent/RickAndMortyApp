@@ -28,7 +28,7 @@ class CharacterDetailViewController: UIViewController {
         guard let viewModel = viewModel else {
             return
         }
-        viewModel.setCharacterImage(for: imageView)
+        viewModel.setCharacterImage()
         nameLabel.text = viewModel.characterName
         statusLabel.text = viewModel.characterStatus
         locationLabel.text = viewModel.characterLocation

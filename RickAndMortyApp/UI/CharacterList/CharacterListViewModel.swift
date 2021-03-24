@@ -56,7 +56,7 @@ class CharacterListViewModel {
     }
     
     func refreshCharacterList() {
-        self.client.character().getAllCharacters {
+        self.characterAPIManager.getAllCharacters {
             [weak self] in switch $0 {
             case .success(let characters):
                 guard let self = self else {
@@ -72,7 +72,7 @@ class CharacterListViewModel {
                 guard let self = self else {
                     return
                 }
-                self.client.character().loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
+                self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
                     [weak self] in switch $0 {
                     case .success(let characterList):
                         guard let self = self else {
@@ -90,7 +90,7 @@ class CharacterListViewModel {
     }
     
     func setEpisodeNameForCharacterList() {
-        self.client.episode().getAllEpisodes() {
+        self.episodeAPIManager.getAllEpisodes() {
             [weak self] in switch $0 {
             case .success(let episodes):
                 guard let self = self else {
@@ -106,7 +106,7 @@ class CharacterListViewModel {
                 }
                 self.didUpdate?()
                 
-                self.client.character().saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
+                self.characterFileManager.saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
             case .failure(let error):
                 print(error)
                 self?.didFailInternetConnection?()
@@ -120,7 +120,11 @@ class CharacterListViewModel {
     private(set) var filteredCharacters: [CharacterModel] = []
     
     // MARK: - Private constants
-    private let client = Client()
+    private let characterAPIManager = CharacterAPIManager()
+    
+    private let characterFileManager = CharacterFileManager()
+    
+    private let episodeAPIManager = EpisodeAPIManager()
     
     private let JSON_FILE_NAME = "characters.json"
     
