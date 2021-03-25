@@ -61,4 +61,17 @@ struct CharacterAPIManager {
             }
         }
     }
+    
+    func getNumberOfCharacterPages(completion: @escaping (Result<Int, Error>) -> Void) {
+        NetworkManager.requestByMethod(method: "character") {
+            switch $0 {
+            case .success(let data):
+                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
+                    completion(.success(infoModel.info.pages))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }

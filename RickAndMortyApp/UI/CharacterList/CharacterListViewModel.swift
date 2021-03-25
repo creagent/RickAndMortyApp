@@ -12,9 +12,7 @@
     var didUpdate: (() -> Void)?
     
     var didFailInternetConnection: (() -> Void)?
-    
-    var startUpdating: (() -> Void)?
-    
+        
     var isFiltering: Bool = false
     
     func filterCharacters(searchText: String) {
@@ -59,47 +57,58 @@
     
     func loadNextPageCharacters() {
         refreshDispatchGroup.enter()
-        numberOfPagesShowing += 1
-        self.characterAPIManager.getCharactersByPageNumber(pageNumber: numberOfPagesShowing) {
-            [weak self] in switch $0 {
-            case .success(let characters):
-                guard let self = self else {
-                    return
-                }
-                let oldCharactersCount = self.characters.count
-                self.characters += characters
-                if oldCharactersCount != 0 {
-                    self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
-                }
-                self.didUpdate?()
-                
-            case.failure(let error):
-                print(error)
-                guard let self = self else {
-                    return
-                }
-                self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
-                    [weak self] in switch $0 {
-                    case .success(let characterList):
-                        guard let self = self else {
-                            return
-                        }
-                        self.characters = characterList.characters
-                        self.didUpdate?()
-                    case.failure(let error):
-                        print(error)
+        currentPage += 1
+        if currentPage <= numberOfCharacterPages {
+            self.characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage) {
+                [weak self] in switch $0 {
+                case .success(let characters):
+                    guard let self = self else {
+                        return
                     }
+                    let oldCharactersCount = self.characters.count
+                    self.characters += characters
+                    if oldCharactersCount != 0 {
+                        self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
+                    }
+                    self.didUpdate?()
+                    
+                case.failure(let error):
+                    print(error)
+                    guard let self = self else {
+                        return
+                    }
+                    self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
+                        [weak self] in switch $0 {
+                        case .success(let characterList):
+                            guard let self = self else {
+                                return
+                            }
+                            self.characters = characterList.characters
+                            self.didUpdate?()
+                        case.failure(let error):
+                            print(error)
+                        }
+                    }
+                    self.didFailInternetConnection?()
                 }
-                self.didFailInternetConnection?()
+                self?.refreshDispatchGroup.leave()
             }
-            self?.refreshDispatchGroup.leave()
         }
     }
     
     func refreshCharacterList() {
         characters = []
-        startUpdating?()
-        numberOfPagesShowing = 0
+        didUpdate?()
+        currentPage = 0
+        characterAPIManager.getNumberOfCharacterPages {
+            [weak self] in
+            switch $0 {
+            case .success(let pages):
+                self?.numberOfCharacterPages = pages
+            case .failure(let error):
+                print(error)
+            }
+        }
         loadNextPageCharacters()
         refreshDispatchGroup.enter()
         loadAllEpisodes()
@@ -139,7 +148,9 @@
     // MARK: - Private
     private var urlToEpisodeNameDict: [String: String] = [:]
     
-    private var numberOfPagesShowing = 0
+    private var currentPage = 0
+    
+    private var numberOfCharacterPages = 1
     
     // MARK: - Private functions
     private func loadAllEpisodes() {

@@ -18,9 +18,6 @@ class CharacterListTVController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == viewModel.numberOfCharactersToShow() - 1 {
-            viewModel.loadNextPageCharacters()
-        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         if let characterCell = cell as? CharacterListTableViewCell {
             let index = indexPath.row
@@ -40,6 +37,7 @@ class CharacterListTVController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.refreshControl = listRefreshControl
+        tableView.prefetchDataSource = self
         
         bindToViewModel()
         viewModel.refreshCharacterList()
@@ -77,24 +75,8 @@ class CharacterListTVController: UITableViewController {
         return text.isEmpty
     }
     
-    private var isFiltering: Bool {
-        if searchController.isActive {
-            tableView.refreshControl = nil
-        }
-        else {
-            tableView.refreshControl = listRefreshControl
-        }
-        return searchController.isActive && !searchBarIsEmpty
-    }
-    
     // MARK: - Private functions
     private func bindToViewModel() {
-        viewModel.startUpdating = {
-            [weak self] in
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
-        }
         viewModel.didUpdate = {
             [weak self] in
             DispatchQueue.main.async {
@@ -137,12 +119,31 @@ class CharacterListTVController: UITableViewController {
 // MARK: - UISearchResultsUpdating
 extension CharacterListTVController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.isFiltering = searchController.searchBar.text?.count ?? 0 > 0
+        viewModel.isFiltering = searchController.isActive && !searchBarIsEmpty
+        if searchController.isActive {
+            tableView.refreshControl = nil
+        }
+        else {
+            tableView.refreshControl = listRefreshControl
+        }
         filterContentForSearchText(searchController.searchBar.text ?? "")
     }
     
     private func filterContentForSearchText(_ searchText: String) {
         viewModel.filterCharacters(searchText: searchText)
         tableView.reloadData()
+    }
+}
+
+// MARK: - UITableViewDataSourcePrefetching
+extension CharacterListTVController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        var indicies: [Int] = []
+        indexPaths.forEach {
+            indicies.append($0.row)
+        }
+        if indicies.contains(viewModel.numberOfCharactersToShow() - 1) {
+            viewModel.loadNextPageCharacters()
+        }
     }
 }
