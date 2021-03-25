@@ -131,7 +131,7 @@ extension CharacterListTVController: UISearchResultsUpdating {
     
     private func filterContentForSearchText(_ searchText: String) {
         viewModel.filterCharacters(searchText: searchText)
-        tableView.reloadData()
+        //tableView.reloadData()
     }
 }
 

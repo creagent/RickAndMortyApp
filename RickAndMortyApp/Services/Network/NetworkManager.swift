@@ -31,16 +31,20 @@ struct NetworkManager {
                 switch $0 {
                 case .success(let (response, data)):
                     guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode < 300 else {
+                        print("\n\n\ninvalidResponse\n\n\n")
+                        print("\n\n\n\(response)\n\n\n")
                         completion(.failure(.invalidResponse))
                         return
                     }
                     print("\(#function) HTTP-Request: " + BASE_API_URL + method)
                     completion(.success(data))
                 case .failure( _):
+                    print("\n\n\nAPI error\n\n\n")
                     completion(.failure(.apiError))
                 }
             }.resume()
         } else {
+            print("\n\n\ninvalidURL\n\n\n")
             completion(.failure(.invalidURL))
         }
     }

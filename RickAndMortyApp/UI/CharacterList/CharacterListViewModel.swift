@@ -16,11 +16,19 @@
     var isFiltering: Bool = false
     
     func filterCharacters(searchText: String) {
-        filteredCharacters = characters.filter {
-            $0.name.contains(searchText)
+        characterAPIManager.getFilteredByNameCharacters(searchText: searchText) {
+            [weak self] in switch $0 {
+            case .success(let characters):
+                self?.filteredCharacters = characters
+                print(characters)
+                self?.didUpdate?()
+                self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
+            case .failure(let error):
+               print(error)
+            }
         }
     }
-    
+        
     func locationText(forCharacterAtIndex index: Int) -> String {
         return isFiltering ? filteredCharacters[index].location : characters[index].location
     }
@@ -59,14 +67,21 @@
         refreshDispatchGroup.enter()
         currentPage += 1
         if currentPage <= numberOfCharacterPages {
-            self.characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage) {
+            self.characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage, method: "character") {
                 [weak self] in switch $0 {
                 case .success(let characters):
                     guard let self = self else {
                         return
                     }
-                    let oldCharactersCount = self.characters.count
-                    self.characters += characters
+                    var oldCharactersCount: Int
+                    if self.isFiltering {
+                        self.filteredCharacters += characters
+                        oldCharactersCount = self.filteredCharacters.count
+                    }
+                    else {
+                        self.characters += characters
+                        oldCharactersCount = self.characters.count
+                    }
                     if oldCharactersCount != 0 {
                         self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
                     }
@@ -119,10 +134,23 @@
     }
     
     func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
-        for i in fromStartingIndex..<characters.count {
-            var character = characters[i]
+        var newCharacters: [CharacterModel]
+        if isFiltering {
+            newCharacters = filteredCharacters
+        }
+        else {
+            newCharacters = characters
+        }
+        for i in fromStartingIndex..<newCharacters.count {
+            var character = newCharacters[i]
             character.firstEpisode = urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
-            characters[i] = character
+            newCharacters[i] = character
+        }
+        if isFiltering {
+            filteredCharacters = newCharacters
+        }
+        else {
+            characters = newCharacters
         }
         didUpdate?()
         
@@ -171,3 +199,4 @@
         }
     }
  }
+
