@@ -12,23 +12,41 @@
     var didUpdate: (() -> Void)?
     
     var didFailInternetConnection: (() -> Void)?
-        
+    
     var isFiltering: Bool = false
     
     func filterCharacters(searchText: String) {
-        characterAPIManager.getFilteredByNameCharacters(searchText: searchText) {
-            [weak self] in switch $0 {
-            case .success(let characters):
-                self?.filteredCharacters = characters
-                print(characters)
-                self?.didUpdate?()
-                self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-            case .failure(let error):
-               print(error)
-            }
-        }
-    }
+        //        characterAPIManager.getFilteredByNameCharacters(searchText: searchText) {
+        //            [weak self] in switch $0 {
+        //            case .success(let characters):
+        //                self?.filteredCharacters = characters
+        //                print(characters)
+        //                self?.didUpdate?()
+        //                self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
+        //            case .failure(let error):
+        //               print(error)
+        //            }
+        //        }
         
+//        let method = "character/?name=\(searchText)"
+//        currentPage += 1
+//        characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage, method: method) {
+//            [weak self] in switch $0 {
+//            case .success(let characters):
+//                self?.filteredCharacters = characters
+//                print(characters)
+//                self?.didUpdate?()
+//                self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
+//            case .failure(let error):
+//                self?.filteredCharacters = []
+//                self?.didUpdate?()
+//                print(error)
+//            }
+//        }
+        self.searchText = searchText
+        loadCharacterList()
+    }
+    
     func locationText(forCharacterAtIndex index: Int) -> String {
         return isFiltering ? filteredCharacters[index].location : characters[index].location
     }
@@ -66,8 +84,12 @@
     func loadNextPageCharacters() {
         refreshDispatchGroup.enter()
         currentPage += 1
+        var method = "character"
+        if isFiltering {
+            method += "/?name=\(searchText)"
+        }
         if currentPage <= numberOfCharacterPages {
-            self.characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage, method: "character") {
+            self.characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage, method: method) {
                 [weak self] in switch $0 {
                 case .success(let characters):
                     guard let self = self else {
@@ -75,12 +97,12 @@
                     }
                     var oldCharactersCount: Int
                     if self.isFiltering {
-                        self.filteredCharacters += characters
                         oldCharactersCount = self.filteredCharacters.count
+                        self.filteredCharacters += characters
                     }
                     else {
-                        self.characters += characters
                         oldCharactersCount = self.characters.count
+                        self.characters += characters
                     }
                     if oldCharactersCount != 0 {
                         self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
@@ -106,16 +128,27 @@
                     }
                     self.didFailInternetConnection?()
                 }
-                self?.refreshDispatchGroup.leave()
+            self?.refreshDispatchGroup.leave()
             }
         }
     }
     
-    func refreshCharacterList() {
-        characters = []
+    func refrechCharacterList() {
+        isRefreshing = true
+        loadCharacterList()
+    }
+    
+    func loadCharacterList() {
+        if isFiltering {
+            filteredCharacters = []
+        }
+        else if isRefreshing {
+            characters = []
+            isRefreshing = false
+        }
         didUpdate?()
         currentPage = 0
-        characterAPIManager.getNumberOfCharacterPages {
+        characterAPIManager.getNumberOfCharacterPages(isFiltering: isFiltering, searchText: searchText) {
             [weak self] in
             switch $0 {
             case .success(let pages):
@@ -134,27 +167,31 @@
     }
     
     func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
-        var newCharacters: [CharacterModel]
-        if isFiltering {
-            newCharacters = filteredCharacters
+        if !urlToEpisodeNameDict.isEmpty {
+            var newCharacters: [CharacterModel]
+            if isFiltering {
+                newCharacters = filteredCharacters
+            }
+            else {
+                newCharacters = characters
+            }
+            for i in fromStartingIndex..<newCharacters.count {
+                var character = newCharacters[i]
+                character.firstEpisode = urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
+                newCharacters[i] = character
+            }
+            if isFiltering {
+                filteredCharacters = newCharacters
+            }
+            else {
+                characters = newCharacters
+            }
+            didUpdate?()
+            
+            if !isFiltering {
+                characterFileManager.saveCharcterListToFile(characters: characters, fileName: JSON_FILE_NAME)
+            }
         }
-        else {
-            newCharacters = characters
-        }
-        for i in fromStartingIndex..<newCharacters.count {
-            var character = newCharacters[i]
-            character.firstEpisode = urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
-            newCharacters[i] = character
-        }
-        if isFiltering {
-            filteredCharacters = newCharacters
-        }
-        else {
-            characters = newCharacters
-        }
-        didUpdate?()
-        
-        characterFileManager.saveCharcterListToFile(characters: characters, fileName: JSON_FILE_NAME)
     }
     
     // MARK: - Readonly
@@ -178,6 +215,10 @@
     
     private var currentPage = 0
     
+    private var isRefreshing = false
+    
+    private var searchText = ""
+    
     private var numberOfCharacterPages = 1
     
     // MARK: - Private functions
@@ -199,4 +240,4 @@
         }
     }
  }
-
+ 

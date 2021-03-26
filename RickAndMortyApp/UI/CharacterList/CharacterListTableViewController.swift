@@ -40,7 +40,7 @@ class CharacterListTVController: UITableViewController {
         tableView.prefetchDataSource = self
         
         bindToViewModel()
-        viewModel.refreshCharacterList()
+        viewModel.loadCharacterList()
         
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -102,7 +102,7 @@ class CharacterListTVController: UITableViewController {
     
     // MARK: - Refreshing
     @objc private func refresh(sender: UIRefreshControl) {
-        viewModel.refreshCharacterList()
+        viewModel.refrechCharacterList()
         sender.endRefreshing()
     }
     
@@ -126,12 +126,12 @@ extension CharacterListTVController: UISearchResultsUpdating {
         else {
             tableView.refreshControl = listRefreshControl
         }
-        filterContentForSearchText(searchController.searchBar.text ?? "")
-    }
-    
-    private func filterContentForSearchText(_ searchText: String) {
-        viewModel.filterCharacters(searchText: searchText)
-        //tableView.reloadData()
+        if searchController.isActive && !searchBarIsEmpty {
+            viewModel.filterCharacters(searchText: searchController.searchBar.text ?? "")
+        }
+        else if searchController.isActive && searchBarIsEmpty {
+            viewModel.refrechCharacterList()
+        }
     }
 }
 

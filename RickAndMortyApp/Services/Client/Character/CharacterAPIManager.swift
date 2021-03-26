@@ -72,8 +72,12 @@ struct CharacterAPIManager {
         }
     }
     
-    func getNumberOfCharacterPages(completion: @escaping (Result<Int, Error>) -> Void) {
-        NetworkManager.requestByMethod(method: "character") {
+    func getNumberOfCharacterPages(isFiltering: Bool, searchText: String = "", completion: @escaping (Result<Int, Error>) -> Void) {
+        var method = "character"
+        if isFiltering {
+            method += "/?name=\(searchText)"
+        }
+        NetworkManager.requestByMethod(method: method) {
             switch $0 {
             case .success(let data):
                 if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
@@ -115,6 +119,7 @@ struct CharacterAPIManager {
                             completion(.success(allCharacters))
                         }
                     }
+                    completion(.success(allCharacters))
                 }
             case .failure(let error):
                 completion(.failure(error))

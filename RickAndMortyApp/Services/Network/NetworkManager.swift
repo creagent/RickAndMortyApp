@@ -32,7 +32,6 @@ struct NetworkManager {
                 case .success(let (response, data)):
                     guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode < 300 else {
                         print("\n\n\ninvalidResponse\n\n\n")
-                        print("\n\n\n\(response)\n\n\n")
                         completion(.failure(.invalidResponse))
                         return
                     }
@@ -89,6 +88,7 @@ extension URLSession {
                 return
             }
             result(.success((response, data)))
+            print(response)
         }
     }
 }
