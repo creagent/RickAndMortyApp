@@ -7,60 +7,67 @@
 
 import Foundation
 
+enum CharacterEndPoint: EndPoint {
+    case character(page: Int)
+    case filteredCharacter(name: String, page: Int)
+    
+    var queryParameters: [String : String] {
+        switch self {
+        case .character(let page):
+            return [
+                "page": String(page)
+            ]
+        case .filteredCharacter(let name, let page):
+            return [
+                "name": name,
+                "page": String(page)
+            ]
+        }
+    }
+    
+    var httpMethod: String {
+        switch self {
+        case .character:
+            return "get"
+        case .filteredCharacter:
+            return "get"
+        }
+    }
+    
+    var APImethod: String {
+        return "character"
+    }
+    
+    mutating func setPageNumber(pageNumber: Int) {
+        switch self {
+        case .character:
+            self = .character(page: pageNumber)
+        case .filteredCharacter(let name, _):
+            self = .filteredCharacter(name: name, page: pageNumber)
+        }   
+    }
+}
+
 // Struct contains methods to request character information from API and loading/saving
 // it from/to file
 struct CharacterAPIManager {
     // MARK: - Public
-    func getAllCharacters(completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
-        var allCharacters = [CharacterModel]()
-        let method = "character"
-        NetworkManager.requestByMethod(method: method) {
-            switch $0 {
-            case .success(let data):
-                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    infoModel.results.forEach {
-                        character in allCharacters.append(CharacterModel(from: character))
-                    }
-                    if infoModel.info.pages >= 2 {
-                        let charactersDispatchGroup = DispatchGroup()
-                        for index in 2...infoModel.info.pages {
-                            charactersDispatchGroup.enter()
-                            self.getCharactersByPageNumber(pageNumber: index, method: method) {
-                                switch $0 {
-                                case .success(let characters):
-                                    characters.forEach {
-                                        character in allCharacters.append(character)
-                                    }
-                                    charactersDispatchGroup.leave()
-                                case .failure(let error):
-                                    completion(.failure(error))
-                                }
-                            }
-                        }
-                        charactersDispatchGroup.notify(queue: .main) {
-                            completion(.success(allCharacters))
-                        }
-                    }
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
+    func getCharacters(page: Int? = nil, name: String? = nil, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
+        var characterEndPoint: CharacterEndPoint
+        if let page = page, let name = name {
+            characterEndPoint = .filteredCharacter(name: name, page: page)
         }
-    }
-    
-    func getCharactersByPageNumber(pageNumber: Int, method: String, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
-        var method = method
-        if method == "character" {
-            method += "/?page="+String(pageNumber)
+        else if let page = page {
+            characterEndPoint = .character(page: page)
         }
         else {
-            method += "&page="+String(pageNumber)
+            characterEndPoint = .character(page: 1)
         }
-        NetworkManager.requestByMethod(method: method) {
+        NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):
                 if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    var characters: [CharacterModel] = []
+                    var characters = [CharacterModel]()
                     infoModel.results.forEach {
                         character in characters.append(CharacterModel(from: character))
                     }
@@ -71,55 +78,20 @@ struct CharacterAPIManager {
             }
         }
     }
-    
-    func getNumberOfCharacterPages(isFiltering: Bool, searchText: String = "", completion: @escaping (Result<Int, Error>) -> Void) {
-        var method = "character"
-        if isFiltering {
-            method += "/?name=\(searchText)"
+
+    func getNumberOfCharacterPages(name: String? = nil , completion: @escaping (Result<Int, Error>) -> Void) {
+        var characterEndPoint: CharacterEndPoint
+        if let name = name {
+            characterEndPoint = .filteredCharacter(name: name, page: 1)
         }
-        NetworkManager.requestByMethod(method: method) {
+        else {
+            characterEndPoint = .character(page: 1)
+        }
+        NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):
                 if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
                     completion(.success(infoModel.info.pages))
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func getFilteredByNameCharacters(searchText: String, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
-        var allCharacters = [CharacterModel]()
-        let method = "character/?name=\(searchText)"
-        NetworkManager.requestByMethod(method: method) {
-            switch $0 {
-            case .success(let data):
-                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    infoModel.results.forEach {
-                        character in allCharacters.append(CharacterModel(from: character))
-                    }
-                    if infoModel.info.pages >= 2 {
-                        let charactersDispatchGroup = DispatchGroup()
-                        for index in 2...infoModel.info.pages {
-                            charactersDispatchGroup.enter()
-                            self.getCharactersByPageNumber(pageNumber: index, method: method) {
-                                switch $0 {
-                                case .success(let characters):
-                                    characters.forEach {
-                                        character in allCharacters.append(character)
-                                    }
-                                    charactersDispatchGroup.leave()
-                                case .failure(let error):
-                                    completion(.failure(error))
-                                }
-                            }
-                        }
-                        charactersDispatchGroup.notify(queue: .main) {
-                            completion(.success(allCharacters))
-                        }
-                    }
-                    completion(.success(allCharacters))
                 }
             case .failure(let error):
                 completion(.failure(error))

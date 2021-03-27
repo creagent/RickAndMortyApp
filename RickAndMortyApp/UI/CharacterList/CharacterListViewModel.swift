@@ -84,12 +84,12 @@
     func loadNextPageCharacters() {
         refreshDispatchGroup.enter()
         currentPage += 1
-        var method = "character"
+        var name: String? = nil
         if isFiltering {
-            method += "/?name=\(searchText)"
+            name = searchText
         }
         if currentPage <= numberOfCharacterPages {
-            self.characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage, method: method) {
+            self.characterAPIManager.getCharacters(page: currentPage, name: name) {
                 [weak self] in switch $0 {
                 case .success(let characters):
                     guard let self = self else {
@@ -148,7 +148,7 @@
         }
         didUpdate?()
         currentPage = 0
-        characterAPIManager.getNumberOfCharacterPages(isFiltering: isFiltering, searchText: searchText) {
+        characterAPIManager.getNumberOfCharacterPages(name: searchText) {
             [weak self] in
             switch $0 {
             case .success(let pages):
@@ -223,8 +223,8 @@
     
     // MARK: - Private functions
     private func loadAllEpisodes() {
-        self.episodeAPIManager.getAllEpisodes() {
-            [weak self] in switch $0 {
+        self.episodeAPIManager.getAllEpisodes { [weak self] in
+            switch $0 {
             case .success(let episodes):
                 guard let self = self else {
                     return

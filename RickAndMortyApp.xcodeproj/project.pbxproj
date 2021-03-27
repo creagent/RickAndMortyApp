@@ -29,6 +29,7 @@
 		83DAE9C525DEA61C0086FE3A /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAE9C425DEA61C0086FE3A /* Character.swift */; };
 		83DAE9CA25DEAE130086FE3A /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAE9C925DEAE130086FE3A /* NetworkManager.swift */; };
 		83DAE9E325DEC2260086FE3A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAE9E225DEC2260086FE3A /* Location.swift */; };
+		83EB7849260F104A00F6A332 /* EndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83EB7848260F104900F6A332 /* EndPoint.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		83DAE9C425DEA61C0086FE3A /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		83DAE9C925DEAE130086FE3A /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		83DAE9E225DEC2260086FE3A /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		83EB7848260F104900F6A332 /* EndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +129,7 @@
 		83048BBE25D7CA28008D32CC /* RickAndMortyApp */ = {
 			isa = PBXGroup;
 			children = (
+				83EB7847260F102F00F6A332 /* Protocols */,
 				8329F9DC260A400600A72D9C /* Services */,
 				83048C0025D7DB6A008D32CC /* Model */,
 				83F2955826088B3300A16707 /* UI */,
@@ -244,6 +247,14 @@
 				83B0D6F3260B74FE00BA2AEC /* Location */,
 			);
 			path = Client;
+			sourceTree = "<group>";
+		};
+		83EB7847260F102F00F6A332 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				83EB7848260F104900F6A332 /* EndPoint.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		83F2955826088B3300A16707 /* UI */ = {
@@ -414,6 +425,7 @@
 				83048BC025D7CA28008D32CC /* AppDelegate.swift in Sources */,
 				8329F9DE260A401600A72D9C /* ImageService.swift in Sources */,
 				83048BC225D7CA28008D32CC /* SceneDelegate.swift in Sources */,
+				83EB7849260F104A00F6A332 /* EndPoint.swift in Sources */,
 				83B0D6E9260B747F00BA2AEC /* CharacterFileManager.swift in Sources */,
 				830BCF2C25E4EB03003C4ED5 /* FileSystemManager.swift in Sources */,
 				83DAE9C525DEA61C0086FE3A /* Character.swift in Sources */,
