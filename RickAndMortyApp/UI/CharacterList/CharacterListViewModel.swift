@@ -21,7 +21,7 @@
     }
     
     func locationText(forCharacterAtIndex index: Int) -> String {
-        return isFiltering ? filteredCharacters[index].location : characters[index].location
+        return isFiltering ? filteredCharacters[index].location.name : characters[index].location.name
     }
     
     func nameText(forCharacterAtIndex index: Int) -> String {
@@ -29,7 +29,17 @@
     }
     
     func firstEpisodeText(forCharacterAtIndex index: Int) -> String {
-        return isFiltering ? filteredCharacters[index].firstEpisode : characters[index].firstEpisode
+        let characters: [CharacterModel]
+        if isFiltering {
+            characters = filteredCharacters
+        }
+        else {
+            characters = self.characters
+        }
+        guard characters[index].episodes != nil, !characters[index].episodes!.isEmpty else {
+            return ""
+        }
+        return characters[index].episodes![0].name
     }
     
     func statusText(forCharacterAtIndex index: Int) -> String {
@@ -89,12 +99,13 @@
                     }
                     self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
                         [weak self] in switch $0 {
-                        case .success(let characterList):
+                        case .success(let characters):
                             guard let self = self else {
                                 return
                             }
-                            self.characters = characterList.characters
+                            self.characters = characters
                             self.didUpdate?()
+                            self.setEpisodeNameForCharacterList(fromStartingIndex: 0)
                         case.failure(let error):
                             print(error)
                         }
@@ -140,7 +151,7 @@
     }
     
     func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
-        if !urlToEpisodeNameDict.isEmpty {
+        if !allEpisodes.isEmpty {
             var newCharacters: [CharacterModel]
             if isFiltering {
                 newCharacters = filteredCharacters
@@ -150,7 +161,20 @@
             }
             for i in fromStartingIndex..<newCharacters.count {
                 var character = newCharacters[i]
-                character.firstEpisode = urlToEpisodeNameDict[character.firstEpisode] ?? "Unknown"
+                for j in 0..<character.episodeUrls.count {
+                    let episodeUrl = character.episodeUrls[j]
+                    guard let idString = episodeUrl.split(separator: "/").last else {
+                        continue
+                    }
+                    guard let id = Int(idString) else {
+                        continue
+                    }
+                    // Episodes indecies start from 1 but array starst from 0
+                    if character.episodes == nil {
+                        character.episodes = []
+                    }
+                    character.episodes?.append(allEpisodes[id - 1])
+                }
                 newCharacters[i] = character
             }
             if isFiltering {
@@ -160,7 +184,7 @@
                 characters = newCharacters
             }
             didUpdate?()
-            
+
             if !isFiltering {
                 characterFileManager.saveCharcterListToFile(characters: characters, fileName: JSON_FILE_NAME)
             }
@@ -184,7 +208,7 @@
     private let refreshDispatchGroup = DispatchGroup()
     
     // MARK: - Private
-    private var urlToEpisodeNameDict: [String: String] = [:]
+    private var allEpisodes: [EpisodeModel] = []
     
     private var currentPage = 0
     
@@ -202,9 +226,7 @@
                 guard let self = self else {
                     return
                 }
-                episodes.forEach {
-                    (item) in self.urlToEpisodeNameDict[item.url] = item.name
-                }
+                self.allEpisodes = episodes
             case .failure(let error):
                 print(error)
                 self?.didFailInternetConnection?()

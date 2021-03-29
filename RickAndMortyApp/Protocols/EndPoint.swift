@@ -14,6 +14,7 @@ protocol EndPoint {
     var urlComponents: URLComponents { get }
     var queryItems: [URLQueryItem] { get }
     var path: String { get }
+    var baseUrl: String { get }
     var subPath: String { get }
 }
 
@@ -21,7 +22,7 @@ extension EndPoint {
     var urlComponents: URLComponents {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
-        urlComponents.host = "rickandmortyapi.com"
+        urlComponents.host = baseUrl
         urlComponents.path = path
         urlComponents.queryItems = queryItems
         return urlComponents
@@ -39,5 +40,9 @@ extension EndPoint {
     
     var subPath: String {
         "api"
+    }
+    
+    var baseUrl: String {
+        return "rickandmortyapi.com"
     }
 }

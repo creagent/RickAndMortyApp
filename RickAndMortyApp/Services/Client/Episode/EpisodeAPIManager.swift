@@ -44,7 +44,7 @@ struct EpisodeAPIManager {
         NetworkManager.request(with: episodeEndPoint) { result in
             switch result {
             case .success(let data):
-                if let infoModel: EpisodeInfoModel = JSONHandler.decodeJSONData(data: data) {
+                if let infoModel: InfoModel<EpisodeModel> = JSONHandler.decodeJSONData(data: data) {
                     let episodesDispatchGroup = DispatchGroup()
                     for page in 1...infoModel.info.pages {
                         episodesDispatchGroup.enter()
@@ -52,7 +52,7 @@ struct EpisodeAPIManager {
                         NetworkManager.request(with: episodeEndPoint) { result in
                             switch result {
                             case .success(let data):
-                                if let infoModel: EpisodeInfoModel = JSONHandler.decodeJSONData(data: data) {
+                                if let infoModel: InfoModel<EpisodeModel> = JSONHandler.decodeJSONData(data: data) {
                                     infoModel.results.forEach {
                                         episode in allEpisodes.append(episode)
                                     }
@@ -64,7 +64,7 @@ struct EpisodeAPIManager {
                         }
                     }
                     episodesDispatchGroup.notify(queue: DispatchQueue.main) {
-                        completion(.success(allEpisodes.sorted { $0.id < $1.id }))
+                        completion(.success(allEpisodes.sorted { $0.id < $1.id } ))
                     }
                 }
             case .failure(let error):

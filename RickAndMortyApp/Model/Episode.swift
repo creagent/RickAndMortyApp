@@ -7,14 +7,8 @@
 
 import Foundation
 
-// Struct for representing episode list response
-struct EpisodeInfoModel: Decodable {
-    let info: Info
-    let results: [EpisodeModel]
-}
-
 // Struct for decoding json representation of character's first appearance episode
-struct EpisodeModel: Decodable, Identifiable {
+struct EpisodeModel: Codable, Identifiable {
     let id: Int
     let name: String
     let airDate: String

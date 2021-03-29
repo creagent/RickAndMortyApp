@@ -49,28 +49,12 @@ enum CharacterEndPoint: EndPoint {
 struct CharacterAPIManager {
     // MARK: - Public
     func getCharacters(page: Int? = nil, name: String? = nil, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
-        var characterEndPoint: CharacterEndPoint
-        if let page = page, let name = name {
-            characterEndPoint = .character(page: page, name: name)
-        }
-        else if let page = page {
-            characterEndPoint = .character(page: page)
-        }
-        else if let name = name {
-            characterEndPoint = .character(name: name)
-        }
-        else {
-            characterEndPoint = .character()
-        }
+        let characterEndPoint: CharacterEndPoint = .character(page: page, name: name)
         NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):
-                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    var characters = [CharacterModel]()
-                    infoModel.results.forEach {
-                        character in characters.append(CharacterModel(from: character))
-                    }
-                    completion(.success(characters))
+                if let infoModel: InfoModel<CharacterModel> = JSONHandler.decodeJSONData(data: data) {
+                    completion(.success(infoModel.results))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -79,17 +63,11 @@ struct CharacterAPIManager {
     }
 
     func getNumberOfCharacterPages(name: String? = nil , completion: @escaping (Result<Int, Error>) -> Void) {
-        var characterEndPoint: CharacterEndPoint
-        if let name = name {
-            characterEndPoint = .character(name: name)
-        }
-        else {
-            characterEndPoint = .character()
-        }
+        let characterEndPoint: CharacterEndPoint = .character(name: name)
         NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):
-                if let infoModel: CharacterInfoModel = JSONHandler.decodeJSONData(data: data) {
+                if let infoModel: InfoModel<CharacterModel> = JSONHandler.decodeJSONData(data: data) {
                     completion(.success(infoModel.info.pages))
                 }
             case .failure(let error):

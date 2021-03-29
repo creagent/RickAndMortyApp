@@ -32,6 +32,7 @@ struct FileSystemManager {
         }
     }
     
+    //func foo(args:AnyObject...)
     static func saveToFile<T: Encodable>(data: T, fileName: String) {
         DispatchQueue.global(qos: .background).async {
             guard let docDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
