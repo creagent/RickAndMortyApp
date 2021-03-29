@@ -40,7 +40,7 @@ class CharacterListTVController: UITableViewController {
         tableView.prefetchDataSource = self
         
         bindToViewModel()
-        viewModel.loadCharacterList()
+        viewModel.refrechCharacterList()
         
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false

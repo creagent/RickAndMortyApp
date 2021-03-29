@@ -8,33 +8,30 @@
 import Foundation
 
 enum LocationEndPoint: EndPoint {
-    case location(page: Int)
+    case location(page: Int? = nil)
     
-    var queryParameters: [String : String] {
+    var queryParameters: [String : Any] {
+        let parameters: [String : Any]
         switch self {
-        case .location(let page):
-            return [
-                "page": String(page)
+        case .location(let page) where page != nil:
+            parameters = [
+                "page": String(page!)
             ]
+        default:
+            parameters = [:]
         }
+        return parameters
     }
     
-    var httpMethod: String {
+    var httpMethod: HTTPMethod {
         switch self {
         case .location:
-            return "get"
+            return .get
         }
     }
     
     var APImethod: String {
         return "location"
-    }
-    
-    mutating func setPageNumber(pageNumber: Int) {
-        switch self {
-        case .location:
-            self = .location(page: pageNumber)
-        }
     }
 }
 

@@ -21,16 +21,17 @@ struct Info: Decodable {
     let pages: Int
 }
 
+enum HTTPMethod {
+    case get, post, put, delete
+}
+
 // Struct for managing network requests
 struct NetworkManager {
     // MARK: - Public
     static let urlSession = URLSession.init(configuration: .ephemeral)
     
     static func request(with endPoint: EndPoint, completion: @escaping (Result<Data, NetworkManagerError>) -> Void) {
-        var urlComponents = self.urlComponents
-        urlComponents.path = "/api/\(endPoint.APImethod)"
-        urlComponents.setQueryItems(with: endPoint.queryParameters)
-        guard let url = urlComponents.url else {
+        guard let url = endPoint.urlComponents.url else {
             print("\n\n\ninvalidURL\n\n\n")
             completion(.failure(.invalidURL))
             return
@@ -52,14 +53,6 @@ struct NetworkManager {
             }
         }.resume()
     }
-    
-    // MARK: - Private
-    static private var urlComponents: URLComponents {
-            var urlComponents = URLComponents()
-            urlComponents.scheme = "https"
-            urlComponents.host = "rickandmortyapi.com"
-            return urlComponents
-        }
 }
 
 // Extension to implement <Result> type in URLSession.
@@ -84,6 +77,8 @@ extension URLSession {
 
 extension URLComponents {
     mutating func setQueryItems(with parameters: [String: String]) {
-        self.queryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        self.queryItems = parameters.map {
+            URLQueryItem(name: $0.key, value: String($0.value))
+        }
     }
 }

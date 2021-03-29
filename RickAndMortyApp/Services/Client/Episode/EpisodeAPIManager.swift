@@ -8,33 +8,30 @@
 import Foundation
 
 enum EpisodeEndPoint: EndPoint {
-    case episode(page: Int)
+    case episode(page: Int? = nil)
     
-    var queryParameters: [String : String] {
+    var queryParameters: [String : Any] {
+        let parameters: [String : Any]
         switch self {
-        case .episode(let page):
-            return [
-                "page": String(page)
+        case .episode(let page) where page != nil:
+            parameters = [
+                "page": String(page!)
             ]
+        default:
+            parameters = [:]
         }
+        return parameters
     }
     
-    var httpMethod: String {
+    var httpMethod: HTTPMethod {
         switch self {
         case .episode:
-            return "get"
+            return .get
         }
     }
     
     var APImethod: String {
         return "episode"
-    }
-    
-    mutating func setPageNumber(pageNumber: Int) {
-        switch self {
-        case .episode:
-            self = .episode(page: pageNumber)
-        }
     }
 }
 
@@ -42,7 +39,7 @@ enum EpisodeEndPoint: EndPoint {
 struct EpisodeAPIManager {
     // MARK: - Public
     func getAllEpisodes(completion: @escaping (Result<[EpisodeModel], Error>) -> Void) {
-        var episodeEndPoint: EpisodeEndPoint = .episode(page: 1)
+        var episodeEndPoint: EpisodeEndPoint = .episode()
         var allEpisodes = [EpisodeModel]()
         NetworkManager.request(with: episodeEndPoint) { result in
             switch result {
@@ -51,7 +48,7 @@ struct EpisodeAPIManager {
                     let episodesDispatchGroup = DispatchGroup()
                     for page in 1...infoModel.info.pages {
                         episodesDispatchGroup.enter()
-                        episodeEndPoint.setPageNumber(pageNumber: page)
+                        episodeEndPoint = .episode(page: page)
                         NetworkManager.request(with: episodeEndPoint) { result in
                             switch result {
                             case .success(let data):

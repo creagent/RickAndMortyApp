@@ -16,33 +16,6 @@
     var isFiltering: Bool = false
     
     func filterCharacters(searchText: String) {
-        //        characterAPIManager.getFilteredByNameCharacters(searchText: searchText) {
-        //            [weak self] in switch $0 {
-        //            case .success(let characters):
-        //                self?.filteredCharacters = characters
-        //                print(characters)
-        //                self?.didUpdate?()
-        //                self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-        //            case .failure(let error):
-        //               print(error)
-        //            }
-        //        }
-        
-//        let method = "character/?name=\(searchText)"
-//        currentPage += 1
-//        characterAPIManager.getCharactersByPageNumber(pageNumber: currentPage, method: method) {
-//            [weak self] in switch $0 {
-//            case .success(let characters):
-//                self?.filteredCharacters = characters
-//                print(characters)
-//                self?.didUpdate?()
-//                self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-//            case .failure(let error):
-//                self?.filteredCharacters = []
-//                self?.didUpdate?()
-//                print(error)
-//            }
-//        }
         self.searchText = searchText
         loadCharacterList()
     }

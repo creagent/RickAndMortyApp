@@ -8,43 +8,39 @@
 import Foundation
 
 enum CharacterEndPoint: EndPoint {
-    case character(page: Int)
-    case filteredCharacter(name: String, page: Int)
+    case character(page: Int? = nil, name: String? = nil)
     
-    var queryParameters: [String : String] {
+    var queryParameters: [String : Any] {
+        let parameters: [String : Any]
         switch self {
-        case .character(let page):
-            return [
-                "page": String(page)
+        case .character(let page, let name) where name != nil && page != nil:
+            parameters = [
+                "name": name!,
+                "page": page!
             ]
-        case .filteredCharacter(let name, let page):
-            return [
-                "name": name,
-                "page": String(page)
+        case .character(_, let name) where name != nil:
+            parameters = [
+                "name": name!
             ]
+        case .character(let page, _) where page != nil:
+            parameters = [
+                "page": page!
+            ]
+        default:
+            parameters = [:]
         }
+        return parameters
     }
     
-    var httpMethod: String {
+    var httpMethod: HTTPMethod {
         switch self {
         case .character:
-            return "get"
-        case .filteredCharacter:
-            return "get"
+            return .get
         }
     }
     
     var APImethod: String {
         return "character"
-    }
-    
-    mutating func setPageNumber(pageNumber: Int) {
-        switch self {
-        case .character:
-            self = .character(page: pageNumber)
-        case .filteredCharacter(let name, _):
-            self = .filteredCharacter(name: name, page: pageNumber)
-        }   
     }
 }
 
@@ -55,13 +51,16 @@ struct CharacterAPIManager {
     func getCharacters(page: Int? = nil, name: String? = nil, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
         var characterEndPoint: CharacterEndPoint
         if let page = page, let name = name {
-            characterEndPoint = .filteredCharacter(name: name, page: page)
+            characterEndPoint = .character(page: page, name: name)
         }
         else if let page = page {
             characterEndPoint = .character(page: page)
         }
+        else if let name = name {
+            characterEndPoint = .character(name: name)
+        }
         else {
-            characterEndPoint = .character(page: 1)
+            characterEndPoint = .character()
         }
         NetworkManager.request(with: characterEndPoint) {
             switch $0 {
@@ -82,10 +81,10 @@ struct CharacterAPIManager {
     func getNumberOfCharacterPages(name: String? = nil , completion: @escaping (Result<Int, Error>) -> Void) {
         var characterEndPoint: CharacterEndPoint
         if let name = name {
-            characterEndPoint = .filteredCharacter(name: name, page: 1)
+            characterEndPoint = .character(name: name)
         }
         else {
-            characterEndPoint = .character(page: 1)
+            characterEndPoint = .character()
         }
         NetworkManager.request(with: characterEndPoint) {
             switch $0 {
