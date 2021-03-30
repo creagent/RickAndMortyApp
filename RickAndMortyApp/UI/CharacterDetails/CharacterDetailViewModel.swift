@@ -21,7 +21,7 @@ class CharacterDetailViewModel {
     weak var delegate: CharacterDetailViewModelDelegate?
     
     func setCharacterImage() {
-        if let url = URL(string: character.imageUrl) {
+        if let url = URL(string: character.image) {
             ImageService.loadImage(fromUrl: url) {
                 [weak self] image in
                 self?.delegate?.didLoadCharacterImage(image: image)
@@ -34,11 +34,14 @@ class CharacterDetailViewModel {
     }
     
     var characterLocation: String {
-        return character.location
+        return character.location.name
     }
     
     var characterFirstEpisode: String {
-        return character.firstEpisode
+        guard character.episodes != nil, !character.episodes!.isEmpty else {
+            return ""
+        }
+        return character.episodes![0].name
     }
     
     var characterStatus: String {

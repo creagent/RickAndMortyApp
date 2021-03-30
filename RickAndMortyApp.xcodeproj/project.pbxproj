@@ -20,6 +20,7 @@
 		830BCF2C25E4EB03003C4ED5 /* FileSystemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCF2B25E4EB03003C4ED5 /* FileSystemManager.swift */; };
 		830BCF3425E4FC48003C4ED5 /* JSONHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCF3325E4FC48003C4ED5 /* JSONHandler.swift */; };
 		8329F9DE260A401600A72D9C /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8329F9DD260A401600A72D9C /* ImageService.swift */; };
+		83A98860261224B200960918 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A9885F261224B200960918 /* Info.swift */; };
 		83B0D6E9260B747F00BA2AEC /* CharacterFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6E8260B747F00BA2AEC /* CharacterFileManager.swift */; };
 		83B0D6EE260B74A000BA2AEC /* CharacterAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6ED260B74A000BA2AEC /* CharacterAPIManager.swift */; };
 		83B0D6F5260B751000BA2AEC /* LocationAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6F4260B751000BA2AEC /* LocationAPIManager.swift */; };
@@ -29,6 +30,7 @@
 		83DAE9C525DEA61C0086FE3A /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAE9C425DEA61C0086FE3A /* Character.swift */; };
 		83DAE9CA25DEAE130086FE3A /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAE9C925DEAE130086FE3A /* NetworkManager.swift */; };
 		83DAE9E325DEC2260086FE3A /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DAE9E225DEC2260086FE3A /* Location.swift */; };
+		83EB7849260F104A00F6A332 /* EndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83EB7848260F104900F6A332 /* EndPoint.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,7 @@
 		830BCF2B25E4EB03003C4ED5 /* FileSystemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSystemManager.swift; sourceTree = "<group>"; };
 		830BCF3325E4FC48003C4ED5 /* JSONHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONHandler.swift; sourceTree = "<group>"; };
 		8329F9DD260A401600A72D9C /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
+		83A9885F261224B200960918 /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		83B0D6E8260B747F00BA2AEC /* CharacterFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterFileManager.swift; sourceTree = "<group>"; };
 		83B0D6ED260B74A000BA2AEC /* CharacterAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterAPIManager.swift; sourceTree = "<group>"; };
 		83B0D6F4260B751000BA2AEC /* LocationAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAPIManager.swift; sourceTree = "<group>"; };
@@ -77,6 +80,7 @@
 		83DAE9C425DEA61C0086FE3A /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		83DAE9C925DEAE130086FE3A /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		83DAE9E225DEC2260086FE3A /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		83EB7848260F104900F6A332 /* EndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +131,7 @@
 		83048BBE25D7CA28008D32CC /* RickAndMortyApp */ = {
 			isa = PBXGroup;
 			children = (
+				83EB7847260F102F00F6A332 /* Protocols */,
 				8329F9DC260A400600A72D9C /* Services */,
 				83048C0025D7DB6A008D32CC /* Model */,
 				83F2955826088B3300A16707 /* UI */,
@@ -160,6 +165,7 @@
 				83DAE9C425DEA61C0086FE3A /* Character.swift */,
 				83DAE9E225DEC2260086FE3A /* Location.swift */,
 				83048C3F25D96F03008D32CC /* Episode.swift */,
+				83A9885F261224B200960918 /* Info.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -244,6 +250,14 @@
 				83B0D6F3260B74FE00BA2AEC /* Location */,
 			);
 			path = Client;
+			sourceTree = "<group>";
+		};
+		83EB7847260F102F00F6A332 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				83EB7848260F104900F6A332 /* EndPoint.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		83F2955826088B3300A16707 /* UI */ = {
@@ -414,7 +428,9 @@
 				83048BC025D7CA28008D32CC /* AppDelegate.swift in Sources */,
 				8329F9DE260A401600A72D9C /* ImageService.swift in Sources */,
 				83048BC225D7CA28008D32CC /* SceneDelegate.swift in Sources */,
+				83EB7849260F104A00F6A332 /* EndPoint.swift in Sources */,
 				83B0D6E9260B747F00BA2AEC /* CharacterFileManager.swift in Sources */,
+				83A98860261224B200960918 /* Info.swift in Sources */,
 				830BCF2C25E4EB03003C4ED5 /* FileSystemManager.swift in Sources */,
 				83DAE9C525DEA61C0086FE3A /* Character.swift in Sources */,
 				83B5D3922604A9CF0078E825 /* CharacterDetailViewModel.swift in Sources */,

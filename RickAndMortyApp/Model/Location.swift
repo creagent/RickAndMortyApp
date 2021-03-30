@@ -7,12 +7,6 @@
 
 import Foundation
 
-// Struct for representing location list response
-struct LocationInfoModel: Decodable {
-    let info: Info
-    let results: [LocationModel]
-}
-
 // Struct for decoding character location's json representation
 struct LocationModel: Codable {
     let id: Int

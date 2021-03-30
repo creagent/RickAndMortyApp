@@ -7,36 +7,56 @@
 
 import Foundation
 
-// Struct contains methods to request episode information
-struct EpisodeAPIManager {
-    // MARK: - Public
-    func getEpisodeByURL(url: String, completion: @escaping (Result<EpisodeModel, Error>) -> Void) {
-        NetworkManager.requestByUrl(url: url) {
-            switch $0 {
-            case .success(let data):
-                if let episode: EpisodeModel = JSONHandler.decodeJSONData(data: data) {
-                    completion(.success(episode))
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
+enum EpisodeEndPoint: EndPoint {
+    case episode(page: Int? = nil)
+    
+    var queryParameters: [String : Any] {
+        let parameters: [String : Any]
+        switch self {
+        case .episode(let page) where page != nil:
+            parameters = [
+                "page": String(page!)
+            ]
+        default:
+            parameters = [:]
+        }
+        return parameters
+    }
+    
+    var httpMethod: HTTPMethod {
+        switch self {
+        case .episode:
+            return .get
         }
     }
     
+    var APImethod: String {
+        return "episode"
+    }
+}
+
+// Struct contains methods to request episode information
+struct EpisodeAPIManager {
+    // MARK: - Public
     func getAllEpisodes(completion: @escaping (Result<[EpisodeModel], Error>) -> Void) {
+        var episodeEndPoint: EpisodeEndPoint = .episode()
         var allEpisodes = [EpisodeModel]()
-        NetworkManager.requestByMethod(method: "episode") { result in
+        NetworkManager.request(with: episodeEndPoint) { result in
             switch result {
             case .success(let data):
-                if let infoModel: EpisodeInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    allEpisodes = infoModel.results
+                if let infoModel: InfoModel<EpisodeModel> = JSONHandler.decodeJSONData(data: data) {
                     let episodesDispatchGroup = DispatchGroup()
-                    for index in 2...infoModel.info.pages {
+                    for page in 1...infoModel.info.pages {
                         episodesDispatchGroup.enter()
-                        self.getEpisodesByPageNumber(pageNumber: index) {
-                            result in switch result {
-                            case .success(let episodes):
-                                allEpisodes.append(contentsOf:episodes)
+                        episodeEndPoint = .episode(page: page)
+                        NetworkManager.request(with: episodeEndPoint) { result in
+                            switch result {
+                            case .success(let data):
+                                if let infoModel: InfoModel<EpisodeModel> = JSONHandler.decodeJSONData(data: data) {
+                                    infoModel.results.forEach {
+                                        episode in allEpisodes.append(episode)
+                                    }
+                                }
                                 episodesDispatchGroup.leave()
                             case .failure(let error):
                                 completion(.failure(error))
@@ -44,22 +64,8 @@ struct EpisodeAPIManager {
                         }
                     }
                     episodesDispatchGroup.notify(queue: DispatchQueue.main) {
-                        completion(.success(allEpisodes.sorted { $0.id < $1.id }))
+                        completion(.success(allEpisodes.sorted { $0.id < $1.id } ))
                     }
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    // MARK: - Private functions
-    private func getEpisodesByPageNumber(pageNumber: Int, completion: @escaping (Result<[EpisodeModel], Error>) -> Void) {
-        NetworkManager.requestByMethod(method: "episode/"+"?page="+String(pageNumber)) {
-            result in switch result {
-            case .success(let data):
-                if let infoModel: EpisodeInfoModel = JSONHandler.decodeJSONData(data: data) {
-                    completion(.success(infoModel.results))
                 }
             case .failure(let error):
                 completion(.failure(error))
