@@ -10,15 +10,13 @@ import Foundation
 enum LocationEndPoint: EndPoint {
     case location(page: Int? = nil)
     
-    var queryParameters: [String : Any] {
+    var queryParameters: [String : Any?] {
         let parameters: [String : Any]
         switch self {
-        case .location(let page) where page != nil:
+        case .location(let page):
             parameters = [
-                "page": String(page!)
+                "page": page as Any
             ]
-        default:
-            parameters = [:]
         }
         return parameters
     }

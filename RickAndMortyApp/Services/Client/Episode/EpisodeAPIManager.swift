@@ -10,15 +10,13 @@ import Foundation
 enum EpisodeEndPoint: EndPoint {
     case episode(page: Int? = nil)
     
-    var queryParameters: [String : Any] {
+    var queryParameters: [String : Any?] {
         let parameters: [String : Any]
         switch self {
-        case .episode(let page) where page != nil:
+        case .episode(let page):
             parameters = [
-                "page": String(page!)
+                "page": page as Any
             ]
-        default:
-            parameters = [:]
         }
         return parameters
     }

@@ -14,7 +14,7 @@ class CharacterListTVController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfCharactersToShow()
+        return viewModel.numberOfCharactersToShow
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -25,7 +25,6 @@ class CharacterListTVController: UITableViewController {
             characterCell.locationText = viewModel.locationText(forCharacterAtIndex: index)
             characterCell.firstEpisodeText = viewModel.firstEpisodeText(forCharacterAtIndex: index)
             characterCell.statusText = viewModel.statusText(forCharacterAtIndex: index)
-            characterCell.setData()
             characterCell.accessoryType = .disclosureIndicator
             
             return characterCell
@@ -46,6 +45,9 @@ class CharacterListTVController: UITableViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search"
         
+        let image = UIImage(named: "sorting")
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style:.plain, target: self, action: #selector(showFilterList))
+        
         navigationItem.searchController = searchController
         definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -59,6 +61,17 @@ class CharacterListTVController: UITableViewController {
             }
             let destinationVC = segue.destination as? CharacterDetailViewController
             destinationVC?.viewModel = viewModel.characterDetailViewModel(atIndex: indexPath.row)
+        }
+        else if segue.identifier == "showFilters" {
+            let navigationController = segue.destination as? UINavigationController
+            let rootController = navigationController?.viewControllers.first as? FilterListTableViewController
+            let filterListViewModel = viewModel.getFilterListViewModel()
+            filterListViewModel.didAppliedFilters = { [weak self] filters in
+                self?.viewModel.setFilters(withFilters: filters)
+                self?.viewModel.filterCharacters(searchText: "")
+                self?.navigationItem.rightBarButtonItem?.tintColor = .systemRed
+            }
+            rootController?.viewModel = filterListViewModel
         }
     }
     
@@ -74,8 +87,12 @@ class CharacterListTVController: UITableViewController {
         }
         return text.isEmpty
     }
-    
+        
     // MARK: - Private functions
+    @objc private func showFilterList() {
+        performSegue(withIdentifier: "showFilters", sender: self)
+    }
+    
     private func bindToViewModel() {
         viewModel.didUpdate = {
             [weak self] in
@@ -142,7 +159,7 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
         indexPaths.forEach {
             indicies.append($0.row)
         }
-        if indicies.contains(viewModel.numberOfCharactersToShow() - 1) {
+        if indicies.contains(viewModel.numberOfCharactersToShow - 1) {
             viewModel.loadNextPageCharacters()
         }
     }

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol EndPoint {
-    var queryParameters: [String: Any] { get }
+    var queryParameters: [String: Any?] { get }
     var httpMethod: HTTPMethod { get }
     var APImethod: String { get }
     var urlComponents: URLComponents { get }
@@ -29,9 +29,13 @@ extension EndPoint {
     }
     
     var queryItems: [URLQueryItem] {
-        return queryParameters.map {
-            URLQueryItem(name: $0.key, value: String(describing: $0.value))
+        var items: [URLQueryItem] = []
+        queryParameters.forEach {
+            if $0.value != nil {
+                items.append(URLQueryItem(name: $0.key, value: String(describing: $0.value!)))
+            }
         }
+        return items
     }
     
     var path: String {
