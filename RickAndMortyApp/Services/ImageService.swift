@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 struct ImageService {
+    // MARK: - Public
     static func loadImage(fromUrl url: URL, completion: @escaping (UIImage) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             if let data = try? Data(contentsOf: url) {

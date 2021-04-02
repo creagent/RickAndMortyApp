@@ -7,27 +7,20 @@
 
 import Foundation
 
-enum CharacterEndPoint: EndPoint {
-    case character(page: Int? = nil, name: String? = nil)
+enum CharacterEndPoint: EndPoint {    
+    case character(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil)
     
-    var queryParameters: [String : Any] {
-        let parameters: [String : Any]
+    var queryParameters: [String : Any?] {
+        var parameters: [String : Any?] = [:]
         switch self {
-        case .character(let page, let name) where name != nil && page != nil:
-            parameters = [
-                "name": name!,
-                "page": page!
-            ]
-        case .character(_, let name) where name != nil:
-            parameters = [
-                "name": name!
-            ]
-        case .character(let page, _) where page != nil:
-            parameters = [
-                "page": page!
-            ]
-        default:
-            parameters = [:]
+        case .character(let page, let name, let filters):
+            parameters = ["name": name]
+            if let filters = filters {
+                filters.forEach {
+                    parameters.merge($0.filterDict)
+                }
+            }
+            parameters["page"] = page
         }
         return parameters
     }
@@ -48,8 +41,8 @@ enum CharacterEndPoint: EndPoint {
 // it from/to file
 struct CharacterAPIManager {
     // MARK: - Public
-    func getCharacters(page: Int? = nil, name: String? = nil, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
-        let characterEndPoint: CharacterEndPoint = .character(page: page, name: name)
+    func getCharacters(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
+        let characterEndPoint: CharacterEndPoint = .character(page: page, name: name, filters: filters)
         NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):

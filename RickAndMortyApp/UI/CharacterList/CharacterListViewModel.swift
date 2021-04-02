@@ -17,7 +17,18 @@
     
     func filterCharacters(searchText: String) {
         self.searchText = searchText
+        isFiltering = true
         loadCharacterList()
+    }
+    
+    func setFilters(withFilters filters: [Filter]) {
+        self.filters = filters
+    }
+    
+    func getFilterListViewModel() -> FilterListViewModel{
+        let viewModel = FilterListViewModel()
+        viewModel.setFilters(withFilters: filters)
+        return viewModel
     }
     
     func locationText(forCharacterAtIndex index: Int) -> String {
@@ -46,7 +57,7 @@
         return isFiltering ? filteredCharacters[index].status : characters[index].status
     }
     
-    func numberOfCharactersToShow() -> Int {
+    var numberOfCharactersToShow: Int {
         if isFiltering {
             return filteredCharacters.count
         }
@@ -72,7 +83,7 @@
             name = searchText
         }
         if currentPage <= numberOfCharacterPages {
-            self.characterAPIManager.getCharacters(page: currentPage, name: name) {
+            self.characterAPIManager.getCharacters(page: currentPage, name: name, filters: filters) {
                 [weak self] in switch $0 {
                 case .success(let characters):
                     guard let self = self else {
@@ -122,7 +133,36 @@
         loadCharacterList()
     }
     
-    func loadCharacterList() {
+    // MARK: - Private constants
+    private let characterAPIManager = CharacterAPIManager()
+    
+    private let characterFileManager = CharacterFileManager()
+    
+    private let episodeAPIManager = EpisodeAPIManager()
+    
+    private let JSON_FILE_NAME = "characters.json"
+    
+    private let refreshDispatchGroup = DispatchGroup()
+    
+    // MARK: - Private
+    private var filters: [Filter] = CharacterFilterFactory.getAllCharacterFilters()
+    
+    private var characters: [CharacterModel] = []
+    
+    private var filteredCharacters: [CharacterModel] = []
+    
+    private var allEpisodes: [EpisodeModel] = []
+    
+    private var currentPage = 0
+    
+    private var isRefreshing = false
+    
+    private var searchText = ""
+    
+    private var numberOfCharacterPages = 1
+    
+    // MARK: - Private functions
+    private func loadCharacterList() {
         if isFiltering {
             filteredCharacters = []
         }
@@ -150,7 +190,23 @@
         }
     }
     
-    func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
+    private func loadAllEpisodes() {
+        self.episodeAPIManager.getAllEpisodes { [weak self] in
+            switch $0 {
+            case .success(let episodes):
+                guard let self = self else {
+                    return
+                }
+                self.allEpisodes = episodes
+            case .failure(let error):
+                print(error)
+                self?.didFailInternetConnection?()
+            }
+            self?.refreshDispatchGroup.leave()
+        }
+    }
+    
+    private func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
         if !allEpisodes.isEmpty {
             var newCharacters: [CharacterModel]
             if isFiltering {
@@ -191,48 +247,5 @@
         }
     }
     
-    // MARK: - Readonly
-    private(set) var characters: [CharacterModel] = []
-    
-    private(set) var filteredCharacters: [CharacterModel] = []
-    
-    // MARK: - Private constants
-    private let characterAPIManager = CharacterAPIManager()
-    
-    private let characterFileManager = CharacterFileManager()
-    
-    private let episodeAPIManager = EpisodeAPIManager()
-    
-    private let JSON_FILE_NAME = "characters.json"
-    
-    private let refreshDispatchGroup = DispatchGroup()
-    
-    // MARK: - Private
-    private var allEpisodes: [EpisodeModel] = []
-    
-    private var currentPage = 0
-    
-    private var isRefreshing = false
-    
-    private var searchText = ""
-    
-    private var numberOfCharacterPages = 1
-    
-    // MARK: - Private functions
-    private func loadAllEpisodes() {
-        self.episodeAPIManager.getAllEpisodes { [weak self] in
-            switch $0 {
-            case .success(let episodes):
-                guard let self = self else {
-                    return
-                }
-                self.allEpisodes = episodes
-            case .failure(let error):
-                print(error)
-                self?.didFailInternetConnection?()
-            }
-            self?.refreshDispatchGroup.leave()
-        }
-    }
  }
  

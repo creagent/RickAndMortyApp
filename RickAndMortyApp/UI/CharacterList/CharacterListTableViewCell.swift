@@ -15,15 +15,27 @@ class CharacterListTableViewCell: UITableViewCell {
     @IBOutlet weak private var statusLabel: UILabel!
     
     // MARK: - Public
-    var nameText: String?
-    var locationText: String?
-    var firstEpisodeText: String?
-    var statusText: String?
+    var nameText: String? {
+        didSet {
+            nameLabel.text = nameText
+        }
+    }
     
-    func setData() {
-        nameLabel.text = nameText
-        locationLabel.text = locationText
-        episodeLabel.text = firstEpisodeText
-        statusLabel.text = statusText
+    var locationText: String? {
+        didSet {
+            locationLabel.text = locationText
+        }
+    }
+    
+    var firstEpisodeText: String? {
+        didSet {
+            episodeLabel.text = firstEpisodeText
+        }
+    }
+    
+    var statusText: String? {
+        didSet {
+            statusLabel.text = statusText
+        }
     }
 }

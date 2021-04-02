@@ -20,6 +20,14 @@
 		830BCF2C25E4EB03003C4ED5 /* FileSystemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCF2B25E4EB03003C4ED5 /* FileSystemManager.swift */; };
 		830BCF3425E4FC48003C4ED5 /* JSONHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCF3325E4FC48003C4ED5 /* JSONHandler.swift */; };
 		8329F9DE260A401600A72D9C /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8329F9DD260A401600A72D9C /* ImageService.swift */; };
+		8340B53E26175B890030E47F /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8340B53D26175B890030E47F /* Dictionary.swift */; };
+		839AD8CD26138675006554A5 /* FilterListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8CC26138675006554A5 /* FilterListTableViewController.swift */; };
+		839AD8D926138BC2006554A5 /* CharacterFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8D826138BC2006554A5 /* CharacterFilter.swift */; };
+		839AD8E326138E82006554A5 /* FilterListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8E226138E82006554A5 /* FilterListViewModel.swift */; };
+		839AD8EC26138ECB006554A5 /* FilterOptionsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8EB26138ECB006554A5 /* FilterOptionsTableViewController.swift */; };
+		839AD8F426138EDB006554A5 /* FilterOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8F326138EDB006554A5 /* FilterOptionsViewModel.swift */; };
+		839AD8F926148E0B006554A5 /* FilterListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8F826148E0B006554A5 /* FilterListTableViewCell.swift */; };
+		839AD8FE26148E9B006554A5 /* FilterOptionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8FD26148E9B006554A5 /* FilterOptionsTableViewCell.swift */; };
 		83A98860261224B200960918 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A9885F261224B200960918 /* Info.swift */; };
 		83B0D6E9260B747F00BA2AEC /* CharacterFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6E8260B747F00BA2AEC /* CharacterFileManager.swift */; };
 		83B0D6EE260B74A000BA2AEC /* CharacterAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6ED260B74A000BA2AEC /* CharacterAPIManager.swift */; };
@@ -70,6 +78,14 @@
 		830BCF2B25E4EB03003C4ED5 /* FileSystemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSystemManager.swift; sourceTree = "<group>"; };
 		830BCF3325E4FC48003C4ED5 /* JSONHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONHandler.swift; sourceTree = "<group>"; };
 		8329F9DD260A401600A72D9C /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
+		8340B53D26175B890030E47F /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		839AD8CC26138675006554A5 /* FilterListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListTableViewController.swift; sourceTree = "<group>"; };
+		839AD8D826138BC2006554A5 /* CharacterFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterFilter.swift; sourceTree = "<group>"; };
+		839AD8E226138E82006554A5 /* FilterListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListViewModel.swift; sourceTree = "<group>"; };
+		839AD8EB26138ECB006554A5 /* FilterOptionsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsTableViewController.swift; sourceTree = "<group>"; };
+		839AD8F326138EDB006554A5 /* FilterOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsViewModel.swift; sourceTree = "<group>"; };
+		839AD8F826148E0B006554A5 /* FilterListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListTableViewCell.swift; sourceTree = "<group>"; };
+		839AD8FD26148E9B006554A5 /* FilterOptionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsTableViewCell.swift; sourceTree = "<group>"; };
 		83A9885F261224B200960918 /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		83B0D6E8260B747F00BA2AEC /* CharacterFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterFileManager.swift; sourceTree = "<group>"; };
 		83B0D6ED260B74A000BA2AEC /* CharacterAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterAPIManager.swift; sourceTree = "<group>"; };
@@ -131,6 +147,7 @@
 		83048BBE25D7CA28008D32CC /* RickAndMortyApp */ = {
 			isa = PBXGroup;
 			children = (
+				8340B53C26175B6A0030E47F /* Extensions */,
 				83EB7847260F102F00F6A332 /* Protocols */,
 				8329F9DC260A400600A72D9C /* Services */,
 				83048C0025D7DB6A008D32CC /* Model */,
@@ -162,6 +179,7 @@
 		83048C0025D7DB6A008D32CC /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				839AD8D726138AFE006554A5 /* Filters */,
 				83DAE9C425DEA61C0086FE3A /* Character.swift */,
 				83DAE9E225DEC2260086FE3A /* Location.swift */,
 				83048C3F25D96F03008D32CC /* Episode.swift */,
@@ -198,6 +216,51 @@
 				8329F9DD260A401600A72D9C /* ImageService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		8340B53C26175B6A0030E47F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8340B53D26175B890030E47F /* Dictionary.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		839AD8CB26138662006554A5 /* Filtering */ = {
+			isa = PBXGroup;
+			children = (
+				839AD8E126138E57006554A5 /* FilterList */,
+				839AD8EA26138EA8006554A5 /* FIlterOptions */,
+			);
+			path = Filtering;
+			sourceTree = "<group>";
+		};
+		839AD8D726138AFE006554A5 /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				839AD8D826138BC2006554A5 /* CharacterFilter.swift */,
+			);
+			path = Filters;
+			sourceTree = "<group>";
+		};
+		839AD8E126138E57006554A5 /* FilterList */ = {
+			isa = PBXGroup;
+			children = (
+				839AD8CC26138675006554A5 /* FilterListTableViewController.swift */,
+				839AD8F826148E0B006554A5 /* FilterListTableViewCell.swift */,
+				839AD8E226138E82006554A5 /* FilterListViewModel.swift */,
+			);
+			path = FilterList;
+			sourceTree = "<group>";
+		};
+		839AD8EA26138EA8006554A5 /* FIlterOptions */ = {
+			isa = PBXGroup;
+			children = (
+				839AD8EB26138ECB006554A5 /* FilterOptionsTableViewController.swift */,
+				839AD8FD26148E9B006554A5 /* FilterOptionsTableViewCell.swift */,
+				839AD8F326138EDB006554A5 /* FilterOptionsViewModel.swift */,
+			);
+			path = FIlterOptions;
 			sourceTree = "<group>";
 		};
 		83B0D6F2260B74E600BA2AEC /* Character */ = {
@@ -263,6 +326,7 @@
 		83F2955826088B3300A16707 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				839AD8CB26138662006554A5 /* Filtering */,
 				83F2955A26088B7A00A16707 /* CharacterDetails */,
 				83F2955926088B5400A16707 /* CharacterList */,
 			);
@@ -418,23 +482,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				83B5D37F2604A8460078E825 /* CharacterListViewModel.swift in Sources */,
+				839AD8CD26138675006554A5 /* FilterListTableViewController.swift in Sources */,
 				83048C3125D85DB0008D32CC /* CharacterListTableViewCell.swift in Sources */,
+				839AD8FE26148E9B006554A5 /* FilterOptionsTableViewCell.swift in Sources */,
+				839AD8F426138EDB006554A5 /* FilterOptionsViewModel.swift in Sources */,
 				83DAE9E325DEC2260086FE3A /* Location.swift in Sources */,
 				83DAE9CA25DEAE130086FE3A /* NetworkManager.swift in Sources */,
+				839AD8E326138E82006554A5 /* FilterListViewModel.swift in Sources */,
 				83B0D6FB260B753B00BA2AEC /* EpisodeAPIManager.swift in Sources */,
 				830BCF3425E4FC48003C4ED5 /* JSONHandler.swift in Sources */,
 				83048BF625D7CAF0008D32CC /* CharacterListTableViewController.swift in Sources */,
 				83B0D6EE260B74A000BA2AEC /* CharacterAPIManager.swift in Sources */,
+				839AD8EC26138ECB006554A5 /* FilterOptionsTableViewController.swift in Sources */,
 				83048BC025D7CA28008D32CC /* AppDelegate.swift in Sources */,
 				8329F9DE260A401600A72D9C /* ImageService.swift in Sources */,
 				83048BC225D7CA28008D32CC /* SceneDelegate.swift in Sources */,
 				83EB7849260F104A00F6A332 /* EndPoint.swift in Sources */,
 				83B0D6E9260B747F00BA2AEC /* CharacterFileManager.swift in Sources */,
+				839AD8F926148E0B006554A5 /* FilterListTableViewCell.swift in Sources */,
 				83A98860261224B200960918 /* Info.swift in Sources */,
 				830BCF2C25E4EB03003C4ED5 /* FileSystemManager.swift in Sources */,
 				83DAE9C525DEA61C0086FE3A /* Character.swift in Sources */,
+				839AD8D926138BC2006554A5 /* CharacterFilter.swift in Sources */,
 				83B5D3922604A9CF0078E825 /* CharacterDetailViewModel.swift in Sources */,
 				83048C4025D96F03008D32CC /* Episode.swift in Sources */,
+				8340B53E26175B890030E47F /* Dictionary.swift in Sources */,
 				83B0D6F5260B751000BA2AEC /* LocationAPIManager.swift in Sources */,
 				83048C2C25D85C27008D32CC /* CharacterDetailViewController.swift in Sources */,
 			);
