@@ -16,6 +16,9 @@ class FilterListTableViewController: UITableViewController {
     
     @IBAction private func clearButtonClickAction(_ sender: Any) {
         viewModel?.clearFilters()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.dismiss(animated: true, completion: nil)
+        }
     }
     
     // MARK: - Public
@@ -49,7 +52,7 @@ class FilterListTableViewController: UITableViewController {
         title = "Filters"
         bindToViewModel()
     }
-
+    
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showFilterOptions" {

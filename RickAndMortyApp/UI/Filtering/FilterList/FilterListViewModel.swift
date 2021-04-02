@@ -17,6 +17,8 @@ class FilterListViewModel {
     
     var didAppliedFilters: (([Filter]) -> Void)?
     
+    var didClearedFilters: (() -> Void)?
+    
     func applyFilters() {
         didAppliedFilters?(filters)
     }
@@ -31,8 +33,9 @@ class FilterListViewModel {
     }
     
     func clearFilters() {
-        filters = CharacterFilterFactory.getAllCharacterFilters()
+        filters = CharacterFilterFactory.getAllCharacterDefaultFilters()
         didUpdate?()
+        didClearedFilters?()
     }
     
     func setFilters(withFilters filters: [Filter]) {
@@ -49,5 +52,5 @@ class FilterListViewModel {
     }
     
     // MARK: - Private
-    private var filters: [Filter] = CharacterFilterFactory.getAllCharacterFilters()
+    private var filters: [Filter] = CharacterFilterFactory.getAllCharacterDefaultFilters()
 }

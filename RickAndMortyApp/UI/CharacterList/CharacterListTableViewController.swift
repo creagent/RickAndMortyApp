@@ -49,6 +49,8 @@ class CharacterListTVController: UITableViewController {
         navigationItem.searchController = searchController
         definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
+        
+        navigationItem.rightBarButtonItem?.tintColor = .none
     }
     
     // MARK: - Navigation    
@@ -66,8 +68,13 @@ class CharacterListTVController: UITableViewController {
             let filterListViewModel = viewModel.getFilterListViewModel()
             filterListViewModel.didAppliedFilters = { [weak self] filters in
                 self?.viewModel.setFilters(withFilters: filters)
-                self?.viewModel.filterCharacters(searchText: "")
+                self?.viewModel.refrechCharacterList()
                 self?.navigationItem.rightBarButtonItem?.tintColor = .systemRed
+            }
+            filterListViewModel.didClearedFilters = { [weak self] in
+                self?.viewModel.setFilters(withFilters: CharacterFilterFactory.getAllCharacterDefaultFilters())
+                self?.viewModel.refrechCharacterList()
+                self?.navigationItem.rightBarButtonItem?.tintColor = .none
             }
             rootController?.viewModel = filterListViewModel
         }
@@ -130,19 +137,18 @@ class CharacterListTVController: UITableViewController {
 // MARK: - UISearchResultsUpdating
 extension CharacterListTVController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.isFiltering = searchController.isActive && !searchBarIsEmpty
         if searchController.isActive {
             tableView.refreshControl = nil
         }
         else {
             tableView.refreshControl = listRefreshControl
         }
-        if searchController.isActive && !searchBarIsEmpty {
-            viewModel.filterCharacters(searchText: searchController.searchBar.text ?? "")
+        if searchController.isActive {
+            viewModel.refrechCharacterList(forSearchText: searchController.searchBar.text)
         }
-        else if searchController.isActive && searchBarIsEmpty {
-            viewModel.refrechCharacterList()
-        }
+//        else if searchController.isActive && searchBarIsEmpty {
+//            viewModel.refrechCharacterList()
+//        }
     }
 }
 

@@ -9,7 +9,7 @@ import Foundation
 
 struct CharacterFilterFactory {
     // MARK: - Public
-    static func getAllCharacterFilters() -> [Filter] {
+    static func getAllCharacterDefaultFilters() -> [Filter] {
         return [getFilter(ofType: .gender), getFilter(ofType: .status)]
     }
     
@@ -47,7 +47,7 @@ struct Filter {
     var filterDict: [String: Any?] {
         let value = options[chosenOptionIndex].value
         if value != "any" {
-            return [name: options[chosenOptionIndex].value]
+            return [name.lowercased(): options[chosenOptionIndex].value]
         }
         else {
             return [:]

@@ -41,13 +41,13 @@ enum CharacterEndPoint: EndPoint {
 // it from/to file
 struct CharacterAPIManager {
     // MARK: - Public
-    func getCharacters(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil, completion: @escaping (Result<[CharacterModel], Error>) -> Void) {
+    func getCharacterInfoModel(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil, completion: @escaping (Result<InfoModel<CharacterModel>, Error>) -> Void) {
         let characterEndPoint: CharacterEndPoint = .character(page: page, name: name, filters: filters)
         NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):
                 if let infoModel: InfoModel<CharacterModel> = JSONHandler.decodeJSONData(data: data) {
-                    completion(.success(infoModel.results))
+                    completion(.success(infoModel))
                 }
             case .failure(let error):
                 completion(.failure(error))
