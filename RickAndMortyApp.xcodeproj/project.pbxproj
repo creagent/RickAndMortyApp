@@ -147,12 +147,12 @@
 		83048BBE25D7CA28008D32CC /* RickAndMortyApp */ = {
 			isa = PBXGroup;
 			children = (
-				8340B53C26175B6A0030E47F /* Extensions */,
-				83EB7847260F102F00F6A332 /* Protocols */,
-				8329F9DC260A400600A72D9C /* Services */,
-				83048C0025D7DB6A008D32CC /* Model */,
 				83F2955826088B3300A16707 /* UI */,
+				83048C0025D7DB6A008D32CC /* Model */,
 				83048C0225D7DB78008D32CC /* View */,
+				8329F9DC260A400600A72D9C /* Services */,
+				83EB7847260F102F00F6A332 /* Protocols */,
+				8340B53C26175B6A0030E47F /* Extensions */,
 				83048C0625D7DBA5008D32CC /* SupportingFiles */,
 			);
 			path = RickAndMortyApp;
