@@ -97,13 +97,18 @@ class CharacterListViewModel {
         currentPage = 0
         self.searchText = searchText
         loadNextPageCharacters()
-        loadAllEpisodes()
+        if searchText == nil {
+            loadAllEpisodes()
+        }
         refreshDispatchGroup.notify(queue: .global(qos: .userInitiated)) {
             [weak self] in
-            self?.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-        }
-        if searchText == nil {
-            characterFileManager.saveCharcterListToFile(characters: characters, fileName: JSON_FILE_NAME)
+            guard let self = self else {
+                return
+            }
+            self.setEpisodeNameForCharacterList(fromStartingIndex: 0)
+            if searchText == nil {
+                self.characterFileManager.saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
+            }
         }
     }
     
