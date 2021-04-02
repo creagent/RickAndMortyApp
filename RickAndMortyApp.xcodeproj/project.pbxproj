@@ -20,6 +20,7 @@
 		830BCF2C25E4EB03003C4ED5 /* FileSystemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCF2B25E4EB03003C4ED5 /* FileSystemManager.swift */; };
 		830BCF3425E4FC48003C4ED5 /* JSONHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCF3325E4FC48003C4ED5 /* JSONHandler.swift */; };
 		8329F9DE260A401600A72D9C /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8329F9DD260A401600A72D9C /* ImageService.swift */; };
+		8340B53E26175B890030E47F /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8340B53D26175B890030E47F /* Dictionary.swift */; };
 		839AD8CD26138675006554A5 /* FilterListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8CC26138675006554A5 /* FilterListTableViewController.swift */; };
 		839AD8D926138BC2006554A5 /* CharacterFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8D826138BC2006554A5 /* CharacterFilter.swift */; };
 		839AD8E326138E82006554A5 /* FilterListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839AD8E226138E82006554A5 /* FilterListViewModel.swift */; };
@@ -77,6 +78,7 @@
 		830BCF2B25E4EB03003C4ED5 /* FileSystemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSystemManager.swift; sourceTree = "<group>"; };
 		830BCF3325E4FC48003C4ED5 /* JSONHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONHandler.swift; sourceTree = "<group>"; };
 		8329F9DD260A401600A72D9C /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
+		8340B53D26175B890030E47F /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		839AD8CC26138675006554A5 /* FilterListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListTableViewController.swift; sourceTree = "<group>"; };
 		839AD8D826138BC2006554A5 /* CharacterFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterFilter.swift; sourceTree = "<group>"; };
 		839AD8E226138E82006554A5 /* FilterListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterListViewModel.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 		83048BBE25D7CA28008D32CC /* RickAndMortyApp */ = {
 			isa = PBXGroup;
 			children = (
+				8340B53C26175B6A0030E47F /* Extensions */,
 				83EB7847260F102F00F6A332 /* Protocols */,
 				8329F9DC260A400600A72D9C /* Services */,
 				83048C0025D7DB6A008D32CC /* Model */,
@@ -213,6 +216,14 @@
 				8329F9DD260A401600A72D9C /* ImageService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		8340B53C26175B6A0030E47F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8340B53D26175B890030E47F /* Dictionary.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		839AD8CB26138662006554A5 /* Filtering */ = {
@@ -495,6 +506,7 @@
 				839AD8D926138BC2006554A5 /* CharacterFilter.swift in Sources */,
 				83B5D3922604A9CF0078E825 /* CharacterDetailViewModel.swift in Sources */,
 				83048C4025D96F03008D32CC /* Episode.swift in Sources */,
+				8340B53E26175B890030E47F /* Dictionary.swift in Sources */,
 				83B0D6F5260B751000BA2AEC /* LocationAPIManager.swift in Sources */,
 				83048C2C25D85C27008D32CC /* CharacterDetailViewController.swift in Sources */,
 			);

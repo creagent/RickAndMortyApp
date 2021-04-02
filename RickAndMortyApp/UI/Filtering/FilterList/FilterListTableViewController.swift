@@ -8,6 +8,16 @@
 import UIKit
 
 class FilterListTableViewController: UITableViewController {
+    // MARK: - IBActions
+    @IBAction private func applyButtonClickAction(_ sender: Any) {
+        viewModel?.applyFilters()
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction private func clearButtonClickAction(_ sender: Any) {
+        viewModel?.clearFilters()
+    }
+    
     // MARK: - Public
     var viewModel: FilterListViewModel? {
         didSet {
@@ -16,10 +26,6 @@ class FilterListTableViewController: UITableViewController {
     }
     
     // MARK: - UITableViewDataSource
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.numberOfFiltersToShow ?? 0
     }
@@ -41,8 +47,6 @@ class FilterListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Filters"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Apply", style: .done, target: self, action: #selector(applyAction))
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(clearAction))
         bindToViewModel()
     }
 
@@ -62,14 +66,5 @@ class FilterListTableViewController: UITableViewController {
         viewModel?.didUpdate = { [weak self] in
             self?.tableView.reloadData()
         }
-    }
-    
-    @objc private  func applyAction() {
-        viewModel?.applyFilters()
-        dismiss(animated: true, completion: nil)
-    }
-
-    @objc private func clearAction() {
-        viewModel?.clearFilters()
     }
 }

@@ -12,10 +12,6 @@ class FilterOptionsTableViewController: UITableViewController {
     var viewModel: FilterOptionsViewModel?
     
     // MARK: - UITableViewDataSource
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.numberOfFilterOptionsToShow ?? 0
     }

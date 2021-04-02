@@ -11,16 +11,13 @@ enum CharacterEndPoint: EndPoint {
     case character(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil)
     
     var queryParameters: [String : Any?] {
-        var parameters: [String : Any?]
+        var parameters: [String : Any?] = [:]
         switch self {
         case .character(let page, let name, let filters):
             parameters = ["name": name]
             if let filters = filters {
                 filters.forEach {
-                    let value = $0.options[$0.chosenOptionIndex].value.lowercased()
-                    if value != "any" {
-                        parameters[$0.name.lowercased()] = value
-                    }
+                    parameters.merge($0.filterDict)
                 }
             }
             parameters["page"] = page

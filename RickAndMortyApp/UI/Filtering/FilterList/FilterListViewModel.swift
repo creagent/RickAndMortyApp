@@ -45,7 +45,7 @@ class FilterListViewModel {
     
     func currentFilterOptionValue(forFilterWithIndex index: Int) -> String {
         let filter = filters[index]
-        return filter.options[filter.chosenOptionIndex].value
+        return filter.options[filter.chosenOptionIndex].valueString
     }
     
     // MARK: - Private

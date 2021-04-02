@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -106,7 +107,14 @@
                             <outlet property="delegate" destination="gUE-nN-Le6" id="57s-Ot-iRG"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="jXr-iv-FeN"/>
+                    <navigationItem key="navigationItem" id="jXr-iv-FeN">
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="sorting" id="iCj-dC-5sH">
+                            <color key="tintColor" name="AccentColor"/>
+                            <connections>
+                                <action selector="showFilterListButtonClickAction:" destination="gUE-nN-Le6" id="kWK-6n-07h"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <segue destination="Uw7-n3-JCV" kind="presentation" identifier="showFilters" id="WlH-Cq-JL1"/>
                     </connections>
@@ -125,26 +133,26 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="filterCell" id="bGW-L5-YZ9" customClass="FilterListTableViewCell" customModule="RickAndMortyApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="61.5"/>
+                                <rect key="frame" x="0.0" y="28" width="414" height="61"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bGW-L5-YZ9" id="WVB-cJ-7M3">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="61.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="61"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FIlterName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nKm-cw-9LA">
-                                            <rect key="frame" x="20" y="20" width="83" height="21.5"/>
+                                            <rect key="frame" x="20" y="20" width="83" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=":" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hRz-cf-Ij6">
-                                            <rect key="frame" x="111" y="20" width="5" height="22"/>
+                                            <rect key="frame" x="111" y="20" width="5" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Option" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wm5-bV-ZR0">
-                                            <rect key="frame" x="124" y="20" width="52" height="21.5"/>
+                                            <rect key="frame" x="124" y="20" width="52" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -175,7 +183,18 @@
                             <outlet property="delegate" destination="jCh-3E-hgA" id="b1u-SU-4Rm"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="1KB-1H-rhT"/>
+                    <navigationItem key="navigationItem" id="1KB-1H-rhT">
+                        <barButtonItem key="leftBarButtonItem" title="Clear" id="IeS-Ij-1ol">
+                            <connections>
+                                <action selector="clearButtonClickAction:" destination="jCh-3E-hgA" id="qEa-VE-kaq"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Apply" style="done" id="g4T-Ga-yyQ">
+                            <connections>
+                                <action selector="applyButtonClickAction:" destination="jCh-3E-hgA" id="c7M-TB-NyI"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aSz-gn-WUI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -388,6 +407,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="sorting" width="20" height="20"/>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

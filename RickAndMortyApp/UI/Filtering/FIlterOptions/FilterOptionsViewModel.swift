@@ -33,7 +33,7 @@ class FilterOptionsViewModel {
     }
     
     func filterOptionValue(atIndex index: Int) -> String {
-        return filter.options[index].value
+        return filter.options[index].valueString
     }
     
     let filterName: String

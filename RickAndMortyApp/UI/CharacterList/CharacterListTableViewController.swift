@@ -8,11 +8,12 @@
 import UIKit
 
 class CharacterListTVController: UITableViewController {
-    // MARK: - UITableViewDataSource
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    // MARK: - IBActions
+    @IBAction private func showFilterListButtonClickAction(_ sender: Any) {
+        performSegue(withIdentifier: "showFilters", sender: self)
     }
     
+    // MARK: - UITableViewDataSource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.numberOfCharactersToShow
     }
@@ -44,10 +45,7 @@ class CharacterListTVController: UITableViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search"
-        
-        let image = UIImage(named: "sorting")
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style:.plain, target: self, action: #selector(showFilterList))
-        
+
         navigationItem.searchController = searchController
         definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -89,10 +87,6 @@ class CharacterListTVController: UITableViewController {
     }
         
     // MARK: - Private functions
-    @objc private func showFilterList() {
-        performSegue(withIdentifier: "showFilters", sender: self)
-    }
-    
     private func bindToViewModel() {
         viewModel.didUpdate = {
             [weak self] in
