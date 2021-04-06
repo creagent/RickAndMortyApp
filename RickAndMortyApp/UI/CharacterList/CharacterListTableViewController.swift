@@ -22,10 +22,11 @@ class CharacterListTVController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         if let characterCell = cell as? CharacterListTableViewCell {
             let index = indexPath.row
-            characterCell.nameText = viewModel.nameText(forCharacterAtIndex: index)
-            characterCell.locationText = viewModel.locationText(forCharacterAtIndex: index)
-            characterCell.firstEpisodeText = viewModel.firstEpisodeText(forCharacterAtIndex: index)
-            characterCell.statusText = viewModel.statusText(forCharacterAtIndex: index)
+            let characterDetailViewModel = viewModel.characterDetailViewModel(atIndex: index)
+            characterCell.nameText = characterDetailViewModel.characterName
+            characterCell.locationText = characterDetailViewModel.characterLocation
+            characterCell.firstEpisodeText = characterDetailViewModel.characterFirstEpisode
+            characterCell.statusText = characterDetailViewModel.characterStatus
             characterCell.accessoryType = .disclosureIndicator
             
             return characterCell
@@ -49,6 +50,8 @@ class CharacterListTVController: UITableViewController {
         navigationItem.searchController = searchController
         definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
+        
+        navigationItem.rightBarButtonItem?.tintColor = .none
     }
     
     // MARK: - Navigation    
@@ -66,8 +69,13 @@ class CharacterListTVController: UITableViewController {
             let filterListViewModel = viewModel.getFilterListViewModel()
             filterListViewModel.didAppliedFilters = { [weak self] filters in
                 self?.viewModel.setFilters(withFilters: filters)
-                self?.viewModel.filterCharacters(searchText: "")
+                self?.viewModel.refrechCharacterList()
                 self?.navigationItem.rightBarButtonItem?.tintColor = .systemRed
+            }
+            filterListViewModel.didClearedFilters = { [weak self] in
+                self?.viewModel.setFilters(withFilters: CharacterFilterFactory.getAllCharacterDefaultFilters())
+                self?.viewModel.refrechCharacterList()
+                self?.navigationItem.rightBarButtonItem?.tintColor = .none
             }
             rootController?.viewModel = filterListViewModel
         }
@@ -130,18 +138,14 @@ class CharacterListTVController: UITableViewController {
 // MARK: - UISearchResultsUpdating
 extension CharacterListTVController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.isFiltering = searchController.isActive && !searchBarIsEmpty
         if searchController.isActive {
             tableView.refreshControl = nil
         }
         else {
             tableView.refreshControl = listRefreshControl
         }
-        if searchController.isActive && !searchBarIsEmpty {
-            viewModel.filterCharacters(searchText: searchController.searchBar.text ?? "")
-        }
-        else if searchController.isActive && searchBarIsEmpty {
-            viewModel.refrechCharacterList()
+        if searchController.isActive {
+            viewModel.refrechCharacterList(forSearchText: searchController.searchBar.text)
         }
     }
 }
@@ -154,7 +158,7 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
             indicies.append($0.row)
         }
         if indicies.contains(viewModel.numberOfCharactersToShow - 1) {
-            viewModel.loadNextPageCharacters()
+            viewModel.getNextPageCharacters()
         }
     }
 }

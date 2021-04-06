@@ -19,6 +19,13 @@ enum NetworkManagerError: Error {
 struct Info: Decodable {
     let count: Int
     let pages: Int
+    let nextPageUrl: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case count
+        case pages
+        case nextPageUrl = "next"
+    }
 }
 
 enum HTTPMethod {
