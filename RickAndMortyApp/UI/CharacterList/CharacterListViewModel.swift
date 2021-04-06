@@ -50,8 +50,8 @@ class CharacterListViewModel {
     }
     
     func getNextPageCharacters() {
-        if nextPageNumber != nil && nextPageNumber! <= numberOfCharacterPages {
-            fetchCharacters(pageNumber: nextPageNumber!, shouldReset: false)
+        if let nextPageNumber = nextPageNumber, nextPageNumber <= numberOfCharacterPages {
+                fetchCharacters(pageNumber: nextPageNumber, shouldReset: false)
         }
     }
     
