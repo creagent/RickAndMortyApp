@@ -23,25 +23,6 @@ class CharacterListViewModel {
         return viewModel
     }
     
-    func locationText(forCharacterAtIndex index: Int) -> String {
-        return characters[index].location.name
-    }
-    
-    func nameText(forCharacterAtIndex index: Int) -> String {
-        return characters[index].name
-    }
-    
-    func firstEpisodeText(forCharacterAtIndex index: Int) -> String {
-        guard characters[index].episodes != nil, !characters[index].episodes!.isEmpty else {
-            return ""
-        }
-        return characters[index].episodes![0].name
-    }
-    
-    func statusText(forCharacterAtIndex index: Int) -> String {
-        return characters[index].status
-    }
-    
     var numberOfCharactersToShow: Int {
         return characters.count
     }
@@ -50,53 +31,9 @@ class CharacterListViewModel {
         return CharacterDetailViewModel(character: characters[index])
     }
     
-    func loadNextPageCharacters() {
-        refreshDispatchGroup.enter()
-        currentPage += 1
-        if currentPage <= numberOfCharacterPages {
-            self.characterAPIManager.getCharacterInfoModel(page: currentPage, name: searchText, filters: filters) {
-                [weak self] in switch $0 {
-                case .success(let characterInfoModel):
-                    guard let self = self else {
-                        return
-                    }
-                    self.numberOfCharacterPages = characterInfoModel.info.pages
-                    let oldCharactersCount = self.characters.count
-                    self.characters += characterInfoModel.results
-                    self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
-                    self.didUpdate?()
-                    
-                case.failure(let error):
-                    print(error)
-                    guard let self = self else {
-                        return
-                    }
-                    self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
-                        [weak self] in switch $0 {
-                        case .success(let characters):
-                            guard let self = self else {
-                                return
-                            }
-                            self.characters = characters
-                            self.didUpdate?()
-                            self.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-                        case.failure(let error):
-                            print(error)
-                        }
-                    }
-                    self.didFailInternetConnection?()
-                }
-            self?.refreshDispatchGroup.leave()
-            }
-        }
-    }
-    
     func refrechCharacterList(forSearchText searchText: String? = nil) {
-        characters = []
-        didUpdate?()
-        currentPage = 0
         self.searchText = searchText
-        loadNextPageCharacters()
+        fetchCharacters(pageNumber: 1, shouldReset: true)
         if searchText == nil {
             loadAllEpisodes()
         }
@@ -109,6 +46,12 @@ class CharacterListViewModel {
             if searchText == nil {
                 self.characterFileManager.saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
             }
+        }
+    }
+    
+    func getNextPageCharacters() {
+        if nextPageNumber != nil && nextPageNumber! <= numberOfCharacterPages {
+            fetchCharacters(pageNumber: nextPageNumber!, shouldReset: false)
         }
     }
     
@@ -130,13 +73,57 @@ class CharacterListViewModel {
         
     private var allEpisodes: [EpisodeModel] = []
     
-    private var currentPage = 0
+    private var nextPageNumber: Int? = 1
     
     private var searchText: String?
     
     private var numberOfCharacterPages = 1
     
     // MARK: - Private functions
+    private func fetchCharacters(pageNumber: Int, shouldReset: Bool) {
+        refreshDispatchGroup.enter()
+        self.characterAPIManager.getCharacterInfoModel(page: pageNumber, name: searchText, filters: filters) {
+            [weak self] in switch $0 {
+            case .success(let characterInfoModel):
+                guard let self = self else {
+                    return
+                }
+                self.numberOfCharacterPages = characterInfoModel.info.pages
+                self.nextPageNumber = self.getNextPageNumber(fromUrlString: characterInfoModel.info.nextPageUrl)
+                if shouldReset {
+                    self.characters = []
+                }
+                let oldCharactersCount = self.characters.count
+                self.characters += characterInfoModel.results
+                if !shouldReset {
+                    self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
+                }
+                self.didUpdate?()
+                
+            case.failure(let error):
+                print(error)
+                guard let self = self else {
+                    return
+                }
+                self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
+                    [weak self] in switch $0 {
+                    case .success(let characters):
+                        guard let self = self else {
+                            return
+                        }
+                        self.characters = characters
+                        self.didUpdate?()
+                        self.setEpisodeNameForCharacterList(fromStartingIndex: 0)
+                    case.failure(let error):
+                        print(error)
+                    }
+                }
+                self.didFailInternetConnection?()
+            }
+        self?.refreshDispatchGroup.leave()
+        }
+    }
+    
     private func loadAllEpisodes() {
         refreshDispatchGroup.enter()
         self.episodeAPIManager.getAllEpisodes { [weak self] in
@@ -178,4 +165,16 @@ class CharacterListViewModel {
         }
     }
     
+    private func getNextPageNumber(fromUrlString urlString: String?) -> Int? {
+        guard let urlString = urlString else {
+            return nil
+        }
+        guard let url = URLComponents(string: urlString) else {
+            return 1
+        }
+        guard let pageNumber = Int(url.queryItems?.first(where: { $0.name == "page" })?.value ?? "1") else {
+            return 1
+        }
+        return pageNumber
+    }
 }

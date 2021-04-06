@@ -22,10 +22,11 @@ class CharacterListTVController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         if let characterCell = cell as? CharacterListTableViewCell {
             let index = indexPath.row
-            characterCell.nameText = viewModel.nameText(forCharacterAtIndex: index)
-            characterCell.locationText = viewModel.locationText(forCharacterAtIndex: index)
-            characterCell.firstEpisodeText = viewModel.firstEpisodeText(forCharacterAtIndex: index)
-            characterCell.statusText = viewModel.statusText(forCharacterAtIndex: index)
+            let characterDetailViewModel = viewModel.characterDetailViewModel(atIndex: index)
+            characterCell.nameText = characterDetailViewModel.characterName
+            characterCell.locationText = characterDetailViewModel.characterLocation
+            characterCell.firstEpisodeText = characterDetailViewModel.characterFirstEpisode
+            characterCell.statusText = characterDetailViewModel.characterStatus
             characterCell.accessoryType = .disclosureIndicator
             
             return characterCell
@@ -146,9 +147,6 @@ extension CharacterListTVController: UISearchResultsUpdating {
         if searchController.isActive {
             viewModel.refrechCharacterList(forSearchText: searchController.searchBar.text)
         }
-//        else if searchController.isActive && searchBarIsEmpty {
-//            viewModel.refrechCharacterList()
-//        }
     }
 }
 
@@ -160,7 +158,7 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
             indicies.append($0.row)
         }
         if indicies.contains(viewModel.numberOfCharactersToShow - 1) {
-            viewModel.loadNextPageCharacters()
+            viewModel.getNextPageCharacters()
         }
     }
 }
