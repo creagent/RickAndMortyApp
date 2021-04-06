@@ -91,11 +91,11 @@ class CharacterListViewModel {
                 self.numberOfCharacterPages = characterInfoModel.info.pages
                 self.nextPageNumber = self.getNextPageNumber(fromUrlString: characterInfoModel.info.nextPageUrl)
                 if shouldReset {
-                    self.characters = []
+                    self.characters = characterInfoModel.results
                 }
-                let oldCharactersCount = self.characters.count
-                self.characters += characterInfoModel.results
-                if !shouldReset {
+                else {
+                    let oldCharactersCount = self.characters.count
+                    self.characters += characterInfoModel.results
                     self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
                 }
                 self.didUpdate?()
