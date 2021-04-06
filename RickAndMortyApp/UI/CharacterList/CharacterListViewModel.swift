@@ -92,6 +92,7 @@ class CharacterListViewModel {
                 self.nextPageNumber = self.getNextPageNumber(fromUrlString: characterInfoModel.info.nextPageUrl)
                 if shouldReset {
                     self.characters = characterInfoModel.results
+                    self.didUpdate?()
                 }
                 else {
                     let oldCharactersCount = self.characters.count

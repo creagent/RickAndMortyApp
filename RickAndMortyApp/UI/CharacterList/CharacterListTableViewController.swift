@@ -46,12 +46,16 @@ class CharacterListTVController: UITableViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search"
+        
+        searchController.searchBar.delegate = self
+        searchController.searchBar.showsBookmarkButton = true
+        searchController.searchBar.setImage(UIImage(named: "sorting"), for: .bookmark, state: .normal)
 
         navigationItem.searchController = searchController
         definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
         
-        navigationItem.rightBarButtonItem?.tintColor = .none
+        //navigationItem.rightBarButtonItem?.tintColor = .none
     }
     
     // MARK: - Navigation    
@@ -62,22 +66,6 @@ class CharacterListTVController: UITableViewController {
             }
             let destinationVC = segue.destination as? CharacterDetailViewController
             destinationVC?.viewModel = viewModel.characterDetailViewModel(atIndex: indexPath.row)
-        }
-        else if segue.identifier == "showFilters" {
-            let navigationController = segue.destination as? UINavigationController
-            let rootController = navigationController?.viewControllers.first as? FilterListTableViewController
-            let filterListViewModel = viewModel.getFilterListViewModel()
-            filterListViewModel.didAppliedFilters = { [weak self] filters in
-                self?.viewModel.setFilters(withFilters: filters)
-                self?.viewModel.refrechCharacterList()
-                self?.navigationItem.rightBarButtonItem?.tintColor = .systemRed
-            }
-            filterListViewModel.didClearedFilters = { [weak self] in
-                self?.viewModel.setFilters(withFilters: CharacterFilterFactory.getAllCharacterDefaultFilters())
-                self?.viewModel.refrechCharacterList()
-                self?.navigationItem.rightBarButtonItem?.tintColor = .none
-            }
-            rootController?.viewModel = filterListViewModel
         }
     }
     
@@ -160,5 +148,24 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
         if indicies.contains(viewModel.numberOfCharactersToShow - 1) {
             viewModel.getNextPageCharacters()
         }
+    }
+}
+
+extension CharacterListTVController: UISearchBarDelegate {
+    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        let viewController = FilterListTableViewController()
+        let filterListViewModel = viewModel.getFilterListViewModel()
+        filterListViewModel.didAppliedFilters = { [weak self] filters in
+            self?.viewModel.setFilters(withFilters: filters)
+            self?.viewModel.refrechCharacterList()
+            //self?.navigationItem.rightBarButtonItem?.tintColor = .systemRed
+        }
+        filterListViewModel.didClearedFilters = { [weak self] in
+            self?.viewModel.setFilters(withFilters: CharacterFilterFactory.getAllCharacterDefaultFilters())
+            self?.viewModel.refrechCharacterList()
+            //self?.navigationItem.rightBarButtonItem?.tintColor = .none
+        }
+        viewController.viewModel = filterListViewModel
+        present(viewController, animated: true, completion: nil)
     }
 }
