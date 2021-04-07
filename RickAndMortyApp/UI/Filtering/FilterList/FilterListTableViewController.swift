@@ -11,14 +11,11 @@ class FilterListTableViewController: UITableViewController {
     // MARK: - IBActions
     @IBAction private func applyButtonClickAction(_ sender: Any) {
         viewModel?.applyFilters()
-        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
     
     @IBAction private func clearButtonClickAction(_ sender: Any) {
         viewModel?.clearFilters()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.dismiss(animated: true, completion: nil)
-        }
     }
     
     // MARK: - Public

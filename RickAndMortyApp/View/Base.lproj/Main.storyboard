@@ -4,7 +4,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -107,14 +106,7 @@
                             <outlet property="delegate" destination="gUE-nN-Le6" id="57s-Ot-iRG"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="jXr-iv-FeN">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="sorting" id="iCj-dC-5sH">
-                            <color key="tintColor" name="AccentColor"/>
-                            <connections>
-                                <action selector="showFilterListButtonClickAction:" destination="gUE-nN-Le6" id="kWK-6n-07h"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="jXr-iv-FeN"/>
                     <connections>
                         <segue destination="Uw7-n3-JCV" kind="presentation" identifier="showFilters" id="WlH-Cq-JL1"/>
                     </connections>
@@ -126,7 +118,7 @@
         <!--Filter List Table View Controller-->
         <scene sceneID="DQJ-2J-t9D">
             <objects>
-                <tableViewController id="jCh-3E-hgA" customClass="FilterListTableViewController" customModule="RickAndMortyApp" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="filterList" id="jCh-3E-hgA" customClass="FilterListTableViewController" customModule="RickAndMortyApp" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="HNc-mq-MDY">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -210,14 +202,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="filterOptionCell" id="K0u-r0-Psf" customClass="FilterOptionsTableViewCell" customModule="RickAndMortyApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="K0u-r0-Psf" id="q2X-Sc-5d0">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Option" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXY-VH-RMW">
-                                            <rect key="frame" x="20" y="11" width="52" height="21"/>
+                                            <rect key="frame" x="20" y="11" width="52" height="21.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -407,10 +399,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="sorting" width="20" height="20"/>
-        <namedColor name="AccentColor">
-            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

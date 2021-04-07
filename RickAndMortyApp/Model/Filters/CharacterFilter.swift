@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 struct CharacterFilterFactory {
     // MARK: - Public
     static func getAllCharacterDefaultFilters() -> [Filter] {
@@ -39,10 +38,15 @@ struct CharacterFilterFactory {
     }
 }
 
-struct Filter {
+class Filter {
     let name: String
     let options: [Option]
     var chosenOptionIndex: Int = 0
+    
+    init(name: String, options: [Option]) {
+        self.name = name
+        self.options = options
+    }
     
     var filterDict: [String: Any?] {
         let value = options[chosenOptionIndex].value
@@ -52,6 +56,19 @@ struct Filter {
         else {
             return [:]
         }
+    }
+    
+    func setDefaultOption() {
+        chosenOptionIndex = 0
+    }
+    
+    static func isDefaultFilters(_ filters: [Filter]) -> Bool {
+        for i in 0..<filters.count {
+            if filters[i].chosenOptionIndex != 0 {
+                return false
+            }
+        }
+        return true
     }
 }
 

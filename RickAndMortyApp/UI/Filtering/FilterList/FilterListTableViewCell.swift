@@ -26,5 +26,4 @@ class FilterListTableViewCell: UITableViewCell {
             filterCurrentOptionLabel.isHidden = filterCurrentOptionText == nil
         }
     }
-    
 }
