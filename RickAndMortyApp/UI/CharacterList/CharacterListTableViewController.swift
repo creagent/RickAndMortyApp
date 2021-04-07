@@ -157,12 +157,11 @@ extension CharacterListTVController: UISearchBarDelegate {
         filterListViewModel.didAppliedFilters = { [weak self] filters in
             self?.viewModel.setFilters(withFilters: filters)
             self?.viewModel.refrechCharacterList(forSearchText: self?.searchController.searchBar.text)
-            self?.searchController.searchBar.setImage(UIImage(named: "sorting")?.withTintColor(.systemRed), for: .bookmark, state: .normal)
-        }
-        filterListViewModel.didClearedFilters = { [weak self] in
-            self?.viewModel.setFilters(withFilters: CharacterFilterFactory.getAllCharacterDefaultFilters())
-            self?.viewModel.refrechCharacterList(forSearchText: self?.searchController.searchBar.text)
-            self?.searchController.searchBar.setImage(UIImage(named: "sorting"), for: .bookmark, state: .normal)
+            if !Filter.isDefaultFilters(filters) {
+                self?.searchController.searchBar.setImage(UIImage(named: "sorting")?.withTintColor(.systemRed), for: .bookmark, state: .normal)
+            } else {
+                self?.searchController.searchBar.setImage(UIImage(named: "sorting"), for: .bookmark, state: .normal)
+            }
         }
         viewController.viewModel = filterListViewModel
         show(viewController, sender: self)

@@ -16,9 +16,6 @@ class FilterListTableViewController: UITableViewController {
     
     @IBAction private func clearButtonClickAction(_ sender: Any) {
         viewModel?.clearFilters()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
     }
     
     // MARK: - Public

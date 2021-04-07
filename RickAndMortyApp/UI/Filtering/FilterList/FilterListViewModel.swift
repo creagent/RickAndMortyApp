@@ -16,9 +16,7 @@ class FilterListViewModel {
     var didUpdate: (() -> Void)?
     
     var didAppliedFilters: (([Filter]) -> Void)?
-    
-    var didClearedFilters: (() -> Void)?
-    
+        
     func applyFilters() {
         didAppliedFilters?(filters)
     }
@@ -37,7 +35,6 @@ class FilterListViewModel {
             $0.setDefaultOption()
         }
         didUpdate?()
-        didClearedFilters?()
     }
     
     func setFilters(withFilters filters: [Filter]) {

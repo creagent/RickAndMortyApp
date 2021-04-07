@@ -61,6 +61,15 @@ class Filter {
     func setDefaultOption() {
         chosenOptionIndex = 0
     }
+    
+    static func isDefaultFilters(_ filters: [Filter]) -> Bool {
+        for i in 0..<filters.count {
+            if filters[i].chosenOptionIndex != 0 {
+                return false
+            }
+        }
+        return true
+    }
 }
 
 struct Option {
