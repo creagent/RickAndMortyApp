@@ -93,8 +93,7 @@ class CharacterListViewModel {
                 if shouldReset {
                     self.characters = characterInfoModel.results
                     self.didUpdate?()
-                }
-                else {
+                } else {
                     let oldCharactersCount = self.characters.count
                     self.characters += characterInfoModel.results
                     self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)

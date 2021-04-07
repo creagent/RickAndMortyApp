@@ -33,7 +33,9 @@ class FilterListViewModel {
     }
     
     func clearFilters() {
-        filters = CharacterFilterFactory.getAllCharacterDefaultFilters()
+        filters.forEach {
+            $0.setDefaultOption()
+        }
         didUpdate?()
         didClearedFilters?()
     }

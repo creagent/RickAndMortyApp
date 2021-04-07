@@ -50,12 +50,10 @@ class CharacterListTVController: UITableViewController {
         searchController.searchBar.delegate = self
         searchController.searchBar.showsBookmarkButton = true
         searchController.searchBar.setImage(UIImage(named: "sorting"), for: .bookmark, state: .normal)
-
+        
         navigationItem.searchController = searchController
         definesPresentationContext = true
         navigationItem.hidesSearchBarWhenScrolling = false
-        
-        //navigationItem.rightBarButtonItem?.tintColor = .none
     }
     
     // MARK: - Navigation    
@@ -153,19 +151,20 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
 
 extension CharacterListTVController: UISearchBarDelegate {
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-        let viewController = FilterListTableViewController()
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let viewController = storyboard.instantiateViewController(identifier: "filterList") as! FilterListTableViewController
         let filterListViewModel = viewModel.getFilterListViewModel()
         filterListViewModel.didAppliedFilters = { [weak self] filters in
             self?.viewModel.setFilters(withFilters: filters)
-            self?.viewModel.refrechCharacterList()
-            //self?.navigationItem.rightBarButtonItem?.tintColor = .systemRed
+            self?.viewModel.refrechCharacterList(forSearchText: self?.searchController.searchBar.text)
+            self?.searchController.searchBar.setImage(UIImage(named: "sorting")?.withTintColor(.systemRed), for: .bookmark, state: .normal)
         }
         filterListViewModel.didClearedFilters = { [weak self] in
             self?.viewModel.setFilters(withFilters: CharacterFilterFactory.getAllCharacterDefaultFilters())
-            self?.viewModel.refrechCharacterList()
-            //self?.navigationItem.rightBarButtonItem?.tintColor = .none
+            self?.viewModel.refrechCharacterList(forSearchText: self?.searchController.searchBar.text)
+            self?.searchController.searchBar.setImage(UIImage(named: "sorting"), for: .bookmark, state: .normal)
         }
         viewController.viewModel = filterListViewModel
-        present(viewController, animated: true, completion: nil)
+        show(viewController, sender: self)
     }
 }
