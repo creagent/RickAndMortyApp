@@ -23,6 +23,22 @@ class CharacterListViewModel {
         return viewModel
     }
     
+    func loadCharactersFromFile() {
+        characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
+            [weak self] in switch $0 {
+            case .success(let characters):
+                guard let self = self else {
+                    return
+                }
+                self.characters = characters
+                self.didUpdate?()
+            case.failure(let error):
+                print(error)
+            }
+        }
+        didFailInternetConnection?()
+    }
+    
     var numberOfCharactersToShow: Int {
         return characters.count
     }
@@ -32,149 +48,55 @@ class CharacterListViewModel {
     }
     
     func refrechCharacterList(forSearchText searchText: String? = nil) {
+        operationQueue.cancelAllOperations()
         self.searchText = searchText
-        fetchCharacters(pageNumber: 1, shouldReset: true)
-        if searchText == nil {
-            loadAllEpisodes()
-        }
-        refreshDispatchGroup.notify(queue: .global(qos: .userInitiated)) {
-            [weak self] in
-            guard let self = self else {
-                return
-            }
-            self.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-            if searchText == nil {
-                self.characterFileManager.saveCharcterListToFile(characters: self.characters, fileName: self.JSON_FILE_NAME)
-            }
-        }
+        shouldResetCharacterList = true
+        fetchCharacters(pageNumber: 1)
     }
     
     func getNextPageCharacters() {
+        shouldResetCharacterList = false
         if let nextPageNumber = nextPageNumber, nextPageNumber <= numberOfCharacterPages {
-                fetchCharacters(pageNumber: nextPageNumber, shouldReset: false)
+                fetchCharacters(pageNumber: nextPageNumber)
         }
     }
     
     // MARK: - Private constants
-    private let characterAPIManager = CharacterAPIManager()
-    
     private let characterFileManager = CharacterFileManager()
-    
-    private let episodeAPIManager = EpisodeAPIManager()
-    
+        
     private let JSON_FILE_NAME = "characters.json"
-    
-    private let refreshDispatchGroup = DispatchGroup()
-    
+        
     // MARK: - Private
     private var filters: [Filter] = CharacterFilterFactory.getAllCharacterDefaultFilters()
     
     private var characters: [CharacterModel] = []
-        
-    private var allEpisodes: [EpisodeModel] = []
-    
+            
     private var nextPageNumber: Int? = 1
     
     private var searchText: String?
     
+    private var shouldResetCharacterList = true
+    
     private var numberOfCharacterPages = 1
     
+    private var operationQueue = OperationQueue()
+    
     // MARK: - Private functions
-    private func fetchCharacters(pageNumber: Int, shouldReset: Bool) {
-        refreshDispatchGroup.enter()
-        self.characterAPIManager.getCharacterInfoModel(page: pageNumber, name: searchText, filters: filters) {
-            [weak self] in switch $0 {
-            case .success(let characterInfoModel):
-                guard let self = self else {
-                    return
-                }
-                self.numberOfCharacterPages = characterInfoModel.info.pages
-                self.nextPageNumber = self.getNextPageNumber(fromUrlString: characterInfoModel.info.nextPageUrl)
-                if shouldReset {
-                    self.characters = characterInfoModel.results
-                    self.didUpdate?()
-                } else {
-                    let oldCharactersCount = self.characters.count
-                    self.characters += characterInfoModel.results
-                    self.setEpisodeNameForCharacterList(fromStartingIndex: oldCharactersCount)
-                }
-                self.didUpdate?()
-                
-            case.failure(let error):
-                print(error)
-                guard let self = self else {
-                    return
-                }
-                self.characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
-                    [weak self] in switch $0 {
-                    case .success(let characters):
-                        guard let self = self else {
-                            return
-                        }
-                        self.characters = characters
-                        self.didUpdate?()
-                        self.setEpisodeNameForCharacterList(fromStartingIndex: 0)
-                    case.failure(let error):
-                        print(error)
-                    }
-                }
-                self.didFailInternetConnection?()
+    private func fetchCharacters(pageNumber: Int) {
+        let getCharacterInfoModelOperation = GetCharactersInfoModelOperation(page: pageNumber, name: searchText, filters: filters)
+        let createLoadEpisodesOperation = CreateLoadEpisodesOperation()
+        createLoadEpisodesOperation.addDependency(getCharacterInfoModelOperation)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            self.operationQueue.addOperations([getCharacterInfoModelOperation, createLoadEpisodesOperation], waitUntilFinished: true)
+            if self.shouldResetCharacterList {
+                self.characters = getCharacterInfoModelOperation.characters ?? []
+            } else {
+                self.characters += getCharacterInfoModelOperation.characters ?? []
             }
-        self?.refreshDispatchGroup.leave()
+            self.nextPageNumber = getCharacterInfoModelOperation.nextPageNumber
+            self.numberOfCharacterPages = getCharacterInfoModelOperation.numberOfCharacterPages ?? 1
+            self.didUpdate?()
         }
-    }
-    
-    private func loadAllEpisodes() {
-        refreshDispatchGroup.enter()
-        self.episodeAPIManager.getAllEpisodes { [weak self] in
-            switch $0 {
-            case .success(let episodes):
-                guard let self = self else {
-                    return
-                }
-                self.allEpisodes = episodes
-            case .failure(let error):
-                print(error)
-                self?.didFailInternetConnection?()
-            }
-            self?.refreshDispatchGroup.leave()
-        }
-    }
-    
-    private func setEpisodeNameForCharacterList(fromStartingIndex: Int) {
-        if !allEpisodes.isEmpty {
-            for i in fromStartingIndex..<characters.count {
-                var character = characters[i]
-                for j in 0..<character.episodeUrls.count {
-                    let episodeUrl = character.episodeUrls[j]
-                    guard let idString = episodeUrl.split(separator: "/").last else {
-                        continue
-                    }
-                    guard let id = Int(idString) else {
-                        continue
-                    }
-                    // Episodes indecies start from 1 but array starst from 0
-                    if character.episodes == nil {
-                        character.episodes = []
-                    }
-                    character.episodes?.append(allEpisodes[id - 1])
-                }
-                characters[i] = character
-            }
-            didUpdate?()
-        }
-    }
-    
-    private func getNextPageNumber(fromUrlString urlString: String?) -> Int? {
-        guard let urlString = urlString else {
-            return nil
-        }
-        guard let url = URLComponents(string: urlString) else {
-            return 1
-        }
-        guard let pageNumber = Int(url.queryItems?.first(where: { $0.name == "page" })?.value ?? "1") else {
-            return 1
-        }
-        return pageNumber
     }
 }

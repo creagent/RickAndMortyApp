@@ -37,14 +37,14 @@ struct NetworkManager {
     // MARK: - Public
     static let urlSession = URLSession.init(configuration: .ephemeral)
     
-    static func request(with endPoint: EndPoint, completion: @escaping (Result<Data, NetworkManagerError>) -> Void) {
+    static func request(with endPoint: EndPoint, completion: @escaping (Result<Data, NetworkManagerError>) -> Void) -> URLSessionDataTask? {
         guard let url = endPoint.urlComponents.url else {
             print("\n\n\ninvalidURL\n\n\n")
             completion(.failure(.invalidURL))
-            return
+            return nil
         }
-        
-        urlSession.dataTask(with: url) {
+        print("\(#function) HTTP-Request: " + url.absoluteString)
+        let dataTask = urlSession.dataTask(with: url) {
             switch $0 {
             case .success(let (response, data)):
                 guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode < 300 else {
@@ -52,13 +52,16 @@ struct NetworkManager {
                     completion(.failure(.invalidResponse))
                     return
                 }
-                print("\(#function) HTTP-Request: " + url.absoluteString)
+                //print("\(#function) HTTP-Request: " + url.absoluteString)
                 completion(.success(data))
             case .failure( _):
                 print("\n\n\nAPI error\n\n\n")
                 completion(.failure(.apiError))
             }
-        }.resume()
+        }
+        dataTask.resume()
+        
+        return dataTask
     }
 }
 
@@ -77,7 +80,7 @@ extension URLSession {
                 return
             }
             result(.success((response, data)))
-            print(response)
+            //print(response)
         }
     }
 }

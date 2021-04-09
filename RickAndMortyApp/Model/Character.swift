@@ -8,7 +8,7 @@
 import Foundation
 
 // Struct for decoding character's json representation
-struct CharacterModel: Codable {
+class CharacterModel: Codable {
     let id: Int
     let name: String
     let status: String

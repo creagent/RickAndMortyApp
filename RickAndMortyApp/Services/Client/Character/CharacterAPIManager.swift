@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CharacterEndPoint: EndPoint {    
+enum CharacterEndPoint: EndPoint {
     case character(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil)
     
     var queryParameters: [String : Any?] {
@@ -41,9 +41,9 @@ enum CharacterEndPoint: EndPoint {
 // it from/to file
 struct CharacterAPIManager {
     // MARK: - Public
-    func getCharacterInfoModel(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil, completion: @escaping (Result<InfoModel<CharacterModel>, Error>) -> Void) {
+    func getCharacterInfoModel(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil, completion: @escaping (Result<InfoModel<CharacterModel>, Error>) -> Void) -> URLSessionDataTask? {
         let characterEndPoint: CharacterEndPoint = .character(page: page, name: name, filters: filters)
-        NetworkManager.request(with: characterEndPoint) {
+        let dataTask = NetworkManager.request(with: characterEndPoint) {
             switch $0 {
             case .success(let data):
                 if let infoModel: InfoModel<CharacterModel> = JSONHandler.decodeJSONData(data: data) {
@@ -53,19 +53,6 @@ struct CharacterAPIManager {
                 completion(.failure(error))
             }
         }
-    }
-
-    func getNumberOfCharacterPages(name: String? = nil , completion: @escaping (Result<Int, Error>) -> Void) {
-        let characterEndPoint: CharacterEndPoint = .character(name: name)
-        NetworkManager.request(with: characterEndPoint) {
-            switch $0 {
-            case .success(let data):
-                if let infoModel: InfoModel<CharacterModel> = JSONHandler.decodeJSONData(data: data) {
-                    completion(.success(infoModel.info.pages))
-                }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        return dataTask
     }
 }
