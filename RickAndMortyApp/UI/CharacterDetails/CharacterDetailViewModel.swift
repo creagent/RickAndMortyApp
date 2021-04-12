@@ -22,11 +22,18 @@ class CharacterDetailViewModel {
     
     func setCharacterImage() {
         if let url = URL(string: character.image) {
-            ImageService.loadImage(fromUrl: url) {
-                [weak self] image in
-                self?.delegate?.didLoadCharacterImage(image: image)
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let self = self else { return }
+                let loadCharacterImageOperation = LoadCharacterImageOperation(url: url)
+                self.operationQueue.addOperations([loadCharacterImageOperation], waitUntilFinished: true)
+                guard let image = loadCharacterImageOperation.image else { return }
+                self.delegate?.didLoadCharacterImage(image: image)
             }
         }
+    }
+    
+    func cancelImageLoading() {
+        operationQueue.cancelAllOperations()
     }
     
     var characterName: String {
@@ -47,6 +54,9 @@ class CharacterDetailViewModel {
     var characterStatus: String {
         return character.status
     }
+    
+    // MARK: - Private constants
+    let operationQueue = OperationQueue()
     
     // MARK: - Private
     private var character: CharacterModel
