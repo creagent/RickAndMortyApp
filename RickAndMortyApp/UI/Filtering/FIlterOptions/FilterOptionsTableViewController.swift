@@ -49,9 +49,7 @@ class FilterOptionsTableViewController: UITableViewController {
     private func bindToViewModel() {
         viewModel?.didUpdate = { [weak self] in
             self?.tableView.reloadData()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self?.navigationController?.popViewController(animated: true)
-            }
+            self?.navigationController?.popViewController(animated: true)
         }
     }
 }

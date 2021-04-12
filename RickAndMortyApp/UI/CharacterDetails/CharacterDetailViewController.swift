@@ -34,6 +34,10 @@ class CharacterDetailViewController: UIViewController {
         locationLabel.text = viewModel.characterLocation
         episodeLabel.text = viewModel.characterFirstEpisode
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        viewModel?.cancelImageLoading()
+    }
 }
 
 extension CharacterDetailViewController: CharacterDetailViewModelDelegate {

@@ -16,7 +16,7 @@ struct JSONHandler {
             let decodedData = try decoder.decode(T.self, from: data)
             return decodedData
         } catch {
-            print(error)
+            print("\(#function) error")
             return nil
         }
     }
@@ -27,7 +27,7 @@ struct JSONHandler {
             let encodedData = try encoder.encode(data)
             return encodedData
         } catch {
-            print(error)
+            print("\(#function) error")
             return nil
         }
     }

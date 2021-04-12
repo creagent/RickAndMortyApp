@@ -52,7 +52,6 @@ struct NetworkManager {
                     completion(.failure(.invalidResponse))
                     return
                 }
-                //print("\(#function) HTTP-Request: " + url.absoluteString)
                 completion(.success(data))
             case .failure( _):
                 print("\n\n\nAPI error\n\n\n")
@@ -80,7 +79,6 @@ extension URLSession {
                 return
             }
             result(.success((response, data)))
-            //print(response)
         }
     }
 }

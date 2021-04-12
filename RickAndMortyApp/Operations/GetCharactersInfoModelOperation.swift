@@ -26,9 +26,6 @@ class GetCharactersInfoModelOperation: AsyncOperation {
                 self.numberOfCharacterPages = characterInfoModel.info.pages
                 self.nextPageNumber = self.getNextPageNumber(fromUrlString: characterInfoModel.info.nextPageUrl)
                 self.characters = characterInfoModel.results
-                
-                // set response data
-            
             case.failure(let error):
                 print(error)
                 
@@ -57,18 +54,6 @@ class GetCharactersInfoModelOperation: AsyncOperation {
     private var dataTask: URLSessionDataTask?
     
     // MARK: - Private functions
-    private func characterEpisodesId(atIndex index: Int) -> [Int] {
-        let character = characters?[index] ?? nil
-        var idList: [Int] = []
-        character?.episodeUrls.forEach {
-            guard let url = URL(string: $0), let id = Int(url.lastPathComponent) else {
-                return
-            }
-            idList.append(id)
-        }
-        return idList
-    }
-    
     private func getNextPageNumber(fromUrlString urlString: String?) -> Int? {
         guard let urlString = urlString else {
             return nil

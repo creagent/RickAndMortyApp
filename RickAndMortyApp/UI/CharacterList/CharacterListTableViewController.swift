@@ -149,9 +149,10 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
     }
 }
 
+// MARK: - UISearchBarDelegate
 extension CharacterListTVController: UISearchBarDelegate {
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let storyboard = UIStoryboard(name: "Filtering", bundle: nil)
         let viewController = storyboard.instantiateViewController(identifier: "filterList") as! FilterListTableViewController
         let filterListViewModel = viewModel.getFilterListViewModel()
         filterListViewModel.didAppliedFilters = { [weak self] filters in

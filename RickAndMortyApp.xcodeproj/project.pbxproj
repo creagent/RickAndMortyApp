@@ -31,6 +31,8 @@
 		83A98860261224B200960918 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A9885F261224B200960918 /* Info.swift */; };
 		83AB82A8261E16FA00FFEB34 /* GetCharactersInfoModelOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AB82A7261E16FA00FFEB34 /* GetCharactersInfoModelOperation.swift */; };
 		83AB82B0261E17BD00FFEB34 /* LoadEpisodesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AB82AF261E17BD00FFEB34 /* LoadEpisodesOperation.swift */; };
+		83AF4F8A26247201001B0F69 /* Filtering.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83AF4F8926247201001B0F69 /* Filtering.storyboard */; };
+		83AF4F8F26247586001B0F69 /* LoadCharacterImageOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AF4F8E26247586001B0F69 /* LoadCharacterImageOperation.swift */; };
 		83B0D6E9260B747F00BA2AEC /* CharacterFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6E8260B747F00BA2AEC /* CharacterFileManager.swift */; };
 		83B0D6EE260B74A000BA2AEC /* CharacterAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6ED260B74A000BA2AEC /* CharacterAPIManager.swift */; };
 		83B0D6F5260B751000BA2AEC /* LocationAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B0D6F4260B751000BA2AEC /* LocationAPIManager.swift */; };
@@ -93,6 +95,8 @@
 		83A9885F261224B200960918 /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		83AB82A7261E16FA00FFEB34 /* GetCharactersInfoModelOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCharactersInfoModelOperation.swift; sourceTree = "<group>"; };
 		83AB82AF261E17BD00FFEB34 /* LoadEpisodesOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadEpisodesOperation.swift; sourceTree = "<group>"; };
+		83AF4F8926247201001B0F69 /* Filtering.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Filtering.storyboard; sourceTree = "<group>"; };
+		83AF4F8E26247586001B0F69 /* LoadCharacterImageOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadCharacterImageOperation.swift; sourceTree = "<group>"; };
 		83B0D6E8260B747F00BA2AEC /* CharacterFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterFileManager.swift; sourceTree = "<group>"; };
 		83B0D6ED260B74A000BA2AEC /* CharacterAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterAPIManager.swift; sourceTree = "<group>"; };
 		83B0D6F4260B751000BA2AEC /* LocationAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAPIManager.swift; sourceTree = "<group>"; };
@@ -201,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				83048BC525D7CA28008D32CC /* Main.storyboard */,
+				83AF4F8926247201001B0F69 /* Filtering.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -279,6 +284,7 @@
 				83AB82A7261E16FA00FFEB34 /* GetCharactersInfoModelOperation.swift */,
 				83AB82AF261E17BD00FFEB34 /* LoadEpisodesOperation.swift */,
 				83FFE16A261F74AE00D21645 /* CreateLoadEpisodesOperation.swift */,
+				83AF4F8E26247586001B0F69 /* LoadCharacterImageOperation.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -475,6 +481,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83AF4F8A26247201001B0F69 /* Filtering.storyboard in Resources */,
 				83048BC925D7CA2C008D32CC /* Assets.xcassets in Resources */,
 				83048BC725D7CA28008D32CC /* Main.storyboard in Resources */,
 			);
@@ -527,6 +534,7 @@
 				83FFE16B261F74AE00D21645 /* CreateLoadEpisodesOperation.swift in Sources */,
 				83DAE9C525DEA61C0086FE3A /* Character.swift in Sources */,
 				839AD8D926138BC2006554A5 /* CharacterFilter.swift in Sources */,
+				83AF4F8F26247586001B0F69 /* LoadCharacterImageOperation.swift in Sources */,
 				83B5D3922604A9CF0078E825 /* CharacterDetailViewModel.swift in Sources */,
 				83048C4025D96F03008D32CC /* Episode.swift in Sources */,
 				8340B53E26175B890030E47F /* Dictionary.swift in Sources */,
