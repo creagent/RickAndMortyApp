@@ -30,7 +30,7 @@ public class CharacterModel: NSManagedObject, Decodable, Identifiable {
         self.type = try container.decode(String.self, forKey: .type)
         self.gender = try container.decode(String.self, forKey: .gender)
         self.origin = try container.decode(CharacterOriginModel.self, forKey: .origin)
-        self.location = try container.decode(CharacterLocationModel.self, forKey: .gender)
+        self.location = try container.decode(CharacterLocationModel.self, forKey: .location)
         self.image = try container.decode(String.self, forKey: .image)
         self.episodeUrls = try container.decode(Set<String>.self, forKey: .episodeUrls) as NSSet
         self.gender = try container.decode(String.self, forKey: .gender)

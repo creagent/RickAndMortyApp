@@ -15,7 +15,7 @@ extension EpisodeModel {
     @NSManaged public var name: String
     @NSManaged public var airDate: String
     @NSManaged public var episode: String
-    @NSManaged public var characters: NSSet
+    @NSManaged public var characters: NSSet?
     @NSManaged public var url: String
     @NSManaged public var created: String
     
@@ -27,7 +27,6 @@ extension EpisodeModel {
         case id
         case name
         case episode
-        case characters
         case url
         case created
         case airDate = "air_date"

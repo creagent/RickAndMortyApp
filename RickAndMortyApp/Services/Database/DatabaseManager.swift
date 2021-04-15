@@ -16,16 +16,20 @@ struct DatabaseManager {
         if shouldReset {
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "CharacterModel")
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            DispatchQueue.main.async {
+                do {
+                    try (UIApplication.shared.delegate as! AppDelegate).persistentContainer.persistentStoreCoordinator.execute(deleteRequest, with: context)
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        DispatchQueue.main.async {
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).persistentContainer.persistentStoreCoordinator.execute(deleteRequest, with: context)
+                try context.save()
             } catch {
                 print(error)
             }
-        }
-        do {
-            try context.save()
-        } catch {
-            print(error)
         }
     }
 }
