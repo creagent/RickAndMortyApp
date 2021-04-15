@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CharacterListTVController: UITableViewController {
     // MARK: - IBActions
@@ -15,12 +16,12 @@ class CharacterListTVController: UITableViewController {
     
     // MARK: - UITableViewDataSource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfCharactersToShow
+        return viewModel?.numberOfCharactersToShow ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        if let characterCell = cell as? CharacterListTableViewCell {
+        if let characterCell = cell as? CharacterListTableViewCell, let viewModel = viewModel {
             let index = indexPath.row
             let characterDetailViewModel = viewModel.characterDetailViewModel(atIndex: index)
             characterCell.nameText = characterDetailViewModel.characterName
@@ -37,11 +38,14 @@ class CharacterListTVController: UITableViewController {
     // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        let characterDataProvider = CharacterDataProvider(delegate: self)
+        viewModel = CharacterListViewModel(characterDataProvider: characterDataProvider)
+        
         tableView.refreshControl = listRefreshControl
         tableView.prefetchDataSource = self
         
         bindToViewModel()
-        viewModel.refrechCharacterList()
+        viewModel?.refrechCharacterList()
         
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -59,7 +63,7 @@ class CharacterListTVController: UITableViewController {
     // MARK: - Navigation    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            guard let indexPath = tableView.indexPathForSelectedRow else {
+            guard let indexPath = tableView.indexPathForSelectedRow, let viewModel = viewModel else {
                 return
             }
             let destinationVC = segue.destination as? CharacterDetailViewController
@@ -68,7 +72,7 @@ class CharacterListTVController: UITableViewController {
     }
     
     // MARK: - Private constants
-    private let viewModel = CharacterListViewModel()
+    private var viewModel: CharacterListViewModel?
     
     private let searchController = UISearchController(searchResultsController: nil)
     
@@ -82,13 +86,13 @@ class CharacterListTVController: UITableViewController {
         
     // MARK: - Private functions
     private func bindToViewModel() {
-        viewModel.didUpdate = {
+        viewModel?.didUpdate = {
             [weak self] in
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
         }
-        viewModel.didFailInternetConnection = {
+        viewModel?.didFailInternetConnection = {
             [weak self] in
             DispatchQueue.main.async {
                 self?.showNoInternetConnectionAlert()
@@ -107,7 +111,7 @@ class CharacterListTVController: UITableViewController {
     
     // MARK: - Refreshing
     @objc private func refresh(sender: UIRefreshControl) {
-        viewModel.refrechCharacterList()
+        viewModel?.refrechCharacterList()
         sender.endRefreshing()
     }
     
@@ -131,7 +135,7 @@ extension CharacterListTVController: UISearchResultsUpdating {
             tableView.refreshControl = listRefreshControl
         }
         if searchController.isActive {
-            viewModel.refrechCharacterList(forSearchText: searchController.searchBar.text)
+            viewModel?.refrechCharacterList(forSearchText: searchController.searchBar.text)
         }
     }
 }
@@ -143,7 +147,7 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
         indexPaths.forEach {
             indicies.append($0.row)
         }
-        if indicies.contains(viewModel.numberOfCharactersToShow - 1) {
+        if let viewModel = viewModel, indicies.contains(viewModel.numberOfCharactersToShow - 1) {
             viewModel.getNextPageCharacters()
         }
     }
@@ -152,12 +156,15 @@ extension CharacterListTVController: UITableViewDataSourcePrefetching {
 // MARK: - UISearchBarDelegate
 extension CharacterListTVController: UISearchBarDelegate {
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        guard let viewModel = viewModel else {
+            return
+        }
         let storyboard = UIStoryboard(name: "Filtering", bundle: nil)
         let viewController = storyboard.instantiateViewController(identifier: "filterList") as! FilterListTableViewController
         let filterListViewModel = viewModel.getFilterListViewModel()
         filterListViewModel.didAppliedFilters = { [weak self] filters in
-            self?.viewModel.setFilters(withFilters: filters)
-            self?.viewModel.refrechCharacterList(forSearchText: self?.searchController.searchBar.text)
+            self?.viewModel?.setFilters(withFilters: filters)
+            self?.viewModel?.refrechCharacterList(forSearchText: self?.searchController.searchBar.text)
             if !Filter.isDefaultFilters(filters) {
                 self?.searchController.searchBar.setImage(UIImage(named: "sorting")?.withTintColor(.systemRed), for: .bookmark, state: .normal)
             } else {
@@ -166,5 +173,32 @@ extension CharacterListTVController: UISearchBarDelegate {
         }
         viewController.viewModel = filterListViewModel
         show(viewController, sender: self)
+    }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+extension CharacterListTVController: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.beginUpdates()
+        viewModel?.getCharactersFromDataProvider()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
+        case .delete:
+            tableView.deleteRows(at: [indexPath!], with: .fade)
+        case .update:
+            tableView.reloadRows(at: [indexPath!], with: .fade)
+        case .move:
+            tableView.moveRow(at: indexPath!, to: newIndexPath!)
+        default:
+            break
+        }
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.endUpdates()
     }
 }

@@ -24,7 +24,8 @@ class LoadEpisodesOperation: AsyncOperation {
                 guard let self = self else {
                     return
                 }
-                self.character.episodes = episodes
+                self.character.episodes = NSSet(object: episodes)
+                DatabaseManager.save()
             case .failure(let error):
                 print(error)
             }
@@ -47,7 +48,7 @@ class LoadEpisodesOperation: AsyncOperation {
     private func getEpisodesId(forCharacter character: CharacterModel) -> [Int] {
         var idList: [Int] = []
         character.episodeUrls.forEach {
-            guard let url = URL(string: $0), let id = Int(url.lastPathComponent) else {
+            guard let url = URL(string: $0 as? String ?? ""), let id = Int(url.lastPathComponent) else {
                 return
             }
             idList.append(id)

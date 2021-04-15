@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CharacterLocationModel" representedClassName="CharacterLocationModel" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterModel" inverseName="location" inverseEntity="CharacterModel"/>
+    </entity>
+    <entity name="CharacterModel" representedClassName="CharacterModel" syncable="YES">
+        <attribute name="episodeUrls" optional="YES" attributeType="Transformable"/>
+        <attribute name="gender" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="image" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="species" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="urlString" optional="YES" attributeType="String"/>
+        <relationship name="episodes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EpisodeModel" inverseName="characters" inverseEntity="EpisodeModel"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterLocationModel" inverseName="character" inverseEntity="CharacterLocationModel"/>
+        <relationship name="origin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterOriginModel" inverseName="character" inverseEntity="CharacterOriginModel"/>
+    </entity>
+    <entity name="CharacterOriginModel" representedClassName="CharacterOriginModel" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterModel" inverseName="origin" inverseEntity="CharacterModel"/>
+    </entity>
+    <entity name="EpisodeModel" representedClassName="EpisodeModel" syncable="YES">
+        <attribute name="airDate" optional="YES" attributeType="String"/>
+        <attribute name="created" optional="YES" attributeType="String"/>
+        <attribute name="episode" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="characters" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CharacterModel" inverseName="episodes" inverseEntity="CharacterModel"/>
+    </entity>
+    <elements>
+        <element name="CharacterLocationModel" positionX="-18" positionY="27" width="128" height="74"/>
+        <element name="CharacterModel" positionX="-63" positionY="-18" width="128" height="209"/>
+        <element name="CharacterOriginModel" positionX="-36" positionY="18" width="128" height="74"/>
+        <element name="EpisodeModel" positionX="-54" positionY="-9" width="128" height="134"/>
+    </elements>
+</model>
