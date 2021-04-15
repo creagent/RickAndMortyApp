@@ -9,10 +9,11 @@ import Foundation
 
 class GetCharactersInfoModelOperation: AsyncOperation {
     // MARK: - Public
-    init(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil) {
+    init(page: Int? = nil, name: String? = nil, filters: [Filter]? = nil, shouldClearDatabase: Bool = false) {
         self.page = page
         characterName = name
         self.filters = filters
+        self.shouldClearDatabase = shouldClearDatabase
     }
     
     override func main() {
@@ -26,10 +27,16 @@ class GetCharactersInfoModelOperation: AsyncOperation {
                 self.numberOfCharacterPages = characterInfoModel.info.pages
                 self.nextPageNumber = self.getNextPageNumber(fromUrlString: characterInfoModel.info.nextPageUrl)
                 self.characters = characterInfoModel.results
+                
+                if (self.characterName == nil || self.characterName == "") && (self.filters == nil || Filter.isDefaultFilters(self.filters)) {
+                    DatabaseManager.save(shouldReset: self.shouldClearDatabase)
+                } else {
+                    if CharacterDataProvider.context.hasChanges {
+                        CharacterDataProvider.context.rollback()
+                    }
+                }
             case.failure(let error):
                 print(error)
-                
-                // load from file
             }
             print("\n\n\nFinished characters loading!\n\n\n")
             self.state = .finished
@@ -49,6 +56,7 @@ class GetCharactersInfoModelOperation: AsyncOperation {
     private let page: Int?
     private let characterName: String?
     private let filters: [Filter]?
+    private let shouldClearDatabase: Bool
     
     // MARK: - Private
     private var dataTask: URLSessionDataTask?

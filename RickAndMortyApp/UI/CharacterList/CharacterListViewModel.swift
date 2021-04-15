@@ -9,6 +9,10 @@ import Foundation
 
 class CharacterListViewModel {
     // MARK: - Public
+    init(characterDataProvider: CharacterDataProvider) {
+        self.characterDataProvider = characterDataProvider
+    }
+    
     var didUpdate: (() -> Void)?
     
     var didFailInternetConnection: (() -> Void)?
@@ -23,20 +27,8 @@ class CharacterListViewModel {
         return viewModel
     }
     
-    func loadCharactersFromFile() {
-        characterFileManager.loadCharacterListFromFile(fileName: self.JSON_FILE_NAME) {
-            [weak self] in switch $0 {
-            case .success(let characters):
-                guard let self = self else {
-                    return
-                }
-                self.characters = characters
-                self.didUpdate?()
-            case.failure(let error):
-                print(error)
-            }
-        }
-        didFailInternetConnection?()
+    func getCharactersFromDataProvider() {
+        characters = characterDataProvider.fetchedResultsController.fetchedObjects ?? []
     }
     
     var numberOfCharactersToShow: Int {
@@ -51,21 +43,16 @@ class CharacterListViewModel {
         operationQueue.cancelAllOperations()
         self.searchText = searchText
         shouldResetCharacterList = true
-        fetchCharacters(pageNumber: 1)
+        fetchCharacters(pageNumber: 1, shouldClearDatabase: true)
     }
     
     func getNextPageCharacters() {
         shouldResetCharacterList = false
         if let nextPageNumber = nextPageNumber, nextPageNumber <= numberOfCharacterPages {
-                fetchCharacters(pageNumber: nextPageNumber)
+            fetchCharacters(pageNumber: nextPageNumber)
         }
     }
-    
-    // MARK: - Private constants
-    private let characterFileManager = CharacterFileManager()
-        
-    private let JSON_FILE_NAME = "characters.json"
-        
+                
     // MARK: - Private
     private var filters: [Filter] = CharacterFilterFactory.getAllCharacterDefaultFilters()
     
@@ -76,27 +63,34 @@ class CharacterListViewModel {
     private var searchText: String?
     
     private var shouldResetCharacterList = true
-    
+        
     private var numberOfCharacterPages = 1
+    
+    private let characterDataProvider: CharacterDataProvider
     
     private var operationQueue = OperationQueue()
     
     // MARK: - Private functions
-    private func fetchCharacters(pageNumber: Int) {
-        let getCharacterInfoModelOperation = GetCharactersInfoModelOperation(page: pageNumber, name: searchText, filters: filters)
+    private func fetchCharacters(pageNumber: Int, shouldClearDatabase: Bool = false) {
+        let getCharacterInfoModelOperation = GetCharactersInfoModelOperation(page: pageNumber, name: searchText, filters: filters, shouldClearDatabase: shouldClearDatabase)
         let createLoadEpisodesOperation = CreateLoadEpisodesOperation()
         createLoadEpisodesOperation.addDependency(getCharacterInfoModelOperation)
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             self.operationQueue.addOperations([getCharacterInfoModelOperation, createLoadEpisodesOperation], waitUntilFinished: true)
-            if self.shouldResetCharacterList {
-                self.characters = getCharacterInfoModelOperation.characters ?? []
+            
+            if (self.searchText == nil || self.searchText == "") && Filter.isDefaultFilters(self.filters) {
+                self.characterDataProvider.fetchAllCharacters()
             } else {
-                self.characters += getCharacterInfoModelOperation.characters ?? []
+                if self.shouldResetCharacterList {
+                    self.characters = getCharacterInfoModelOperation.characters ?? []
+                } else {
+                    self.characters += getCharacterInfoModelOperation.characters ?? []
+                }
+                self.nextPageNumber = getCharacterInfoModelOperation.nextPageNumber
+                self.numberOfCharacterPages = getCharacterInfoModelOperation.numberOfCharacterPages ?? 1
+                self.didUpdate?()
             }
-            self.nextPageNumber = getCharacterInfoModelOperation.nextPageNumber
-            self.numberOfCharacterPages = getCharacterInfoModelOperation.numberOfCharacterPages ?? 1
-            self.didUpdate?()
         }
     }
 }

@@ -62,7 +62,10 @@ class Filter {
         chosenOptionIndex = 0
     }
     
-    static func isDefaultFilters(_ filters: [Filter]) -> Bool {
+    static func isDefaultFilters(_ filters: [Filter]?) -> Bool {
+        guard let filters = filters else {
+            return true
+        }
         for i in 0..<filters.count {
             if filters[i].chosenOptionIndex != 0 {
                 return false

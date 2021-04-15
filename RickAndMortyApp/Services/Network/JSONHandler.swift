@@ -12,11 +12,12 @@ struct JSONHandler {
     // MARK: - Public
     static func decodeJSONData<T: Decodable>(data: Data) -> T? {
         let decoder = JSONDecoder()
+        decoder.userInfo[CodingUserInfoKey.managedObjectContext] = CharacterDataProvider.context
         do {
             let decodedData = try decoder.decode(T.self, from: data)
             return decodedData
         } catch {
-            print("\(#function) error")
+            print("\(#function) \(error.localizedDescription)\n\n\((error as NSError).userInfo)\n\n\(error)")
             return nil
         }
     }
