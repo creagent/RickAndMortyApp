@@ -45,7 +45,7 @@ class CharacterDetailViewModel {
     }
     
     var characterFirstEpisode: String {
-        guard character.episodes != nil, !character.episodes!.allObjects.isEmpty, let episode = character.episodes!.allObjects[0] as? EpisodeModel else {
+        guard character.episodes != nil, !character.episodes!.isEmpty, let episode = character.episodes?[character.episodes!.startIndex] else {
             return ""
         }
         return episode.name

@@ -22,7 +22,7 @@ extension CharacterModel {
     @NSManaged public var location: CharacterLocationModel
     @NSManaged public var image: String
     @NSManaged public var episodeUrls: NSSet
-    @NSManaged public var episodes: NSSet?
+    @NSManaged public var episodes: Set<EpisodeModel>?
     @NSManaged public var urlString: String
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CharacterModel> {

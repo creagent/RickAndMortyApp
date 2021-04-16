@@ -24,7 +24,10 @@ class LoadEpisodesOperation: AsyncOperation {
                 guard let self = self else {
                     return
                 }
-                self.character.episodes = NSSet(object: episodes)
+                episodes.forEach {
+                    $0.characters?.insert(self.character)
+                }
+                self.character.episodes = Set<EpisodeModel>(episodes)
                 DatabaseManager.save()
             case .failure(let error):
                 print(error)

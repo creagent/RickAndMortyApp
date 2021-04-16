@@ -17,7 +17,11 @@ struct CharacterDataProvider {
     }
     
     func fetchAllCharacters() {
-        try? fetchedResultsController.performFetch()
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            print(error)
+        }
     }
     
     var fetchedResultsController: NSFetchedResultsController<CharacterModel> = {
@@ -25,6 +29,8 @@ struct CharacterDataProvider {
         let sort = NSSortDescriptor(key: "id", ascending: false)
         request.sortDescriptors = [sort]
         request.fetchBatchSize = 20
+        
+        print("\n\n\n\(#function) \(context)\n\n\n")
         
         return NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
     }()

@@ -15,7 +15,7 @@ extension EpisodeModel {
     @NSManaged public var name: String
     @NSManaged public var airDate: String
     @NSManaged public var episode: String
-    @NSManaged public var characters: NSSet?
+    @NSManaged public var characters: Set<CharacterModel>?
     @NSManaged public var url: String
     @NSManaged public var created: String
     

@@ -29,6 +29,7 @@ class CharacterListViewModel {
     
     func getCharactersFromDataProvider() {
         characters = characterDataProvider.fetchedResultsController.fetchedObjects ?? []
+        didUpdate?()
     }
     
     var numberOfCharactersToShow: Int {

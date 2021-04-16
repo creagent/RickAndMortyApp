@@ -21,6 +21,7 @@ public class CharacterModel: NSManagedObject, Decodable, Identifiable {
         }
         
         self.init(context: context)
+        print("\n\n\n\(#function) \(context)\n\n\n")
         
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(Int64.self, forKey: .id)

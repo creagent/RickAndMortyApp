@@ -6,7 +6,7 @@
         <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterModel" inverseName="location" inverseEntity="CharacterModel"/>
     </entity>
     <entity name="CharacterModel" representedClassName="CharacterModel" syncable="YES">
-        <attribute name="episodeUrls" optional="YES" attributeType="Transformable"/>
+        <attribute name="episodeUrls" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="gender" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="image" optional="YES" attributeType="String"/>

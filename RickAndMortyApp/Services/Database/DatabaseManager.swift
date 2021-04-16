@@ -26,6 +26,7 @@ struct DatabaseManager {
         }
         DispatchQueue.main.async {
             do {
+                print("\n\n\n\(#function) \(context)\n\n\n")
                 try context.save()
             } catch {
                 print(error)
