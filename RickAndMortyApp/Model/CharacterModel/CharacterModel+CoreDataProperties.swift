@@ -21,7 +21,7 @@ extension CharacterModel {
     @NSManaged public var origin: CharacterOriginModel
     @NSManaged public var location: CharacterLocationModel
     @NSManaged public var image: String
-    @NSManaged public var episodeUrls: NSSet
+    @NSManaged public var episodeUrls: Array<String>
     @NSManaged public var episodes: Set<EpisodeModel>?
     @NSManaged public var urlString: String
     

@@ -82,6 +82,7 @@ class CharacterListViewModel {
             
             if (self.searchText == nil || self.searchText == "") && Filter.isDefaultFilters(self.filters) {
                 self.characterDataProvider.fetchAllCharacters()
+                self.characters = self.characterDataProvider.fetchedResultsController.fetchedObjects ?? []
             } else {
                 if self.shouldResetCharacterList {
                     self.characters = getCharacterInfoModelOperation.characters ?? []

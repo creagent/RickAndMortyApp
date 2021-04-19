@@ -10,10 +10,11 @@ import CoreData
 import UIKit
 
 struct CharacterDataProvider {
-    static let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    static var context: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    init(delegate: NSFetchedResultsControllerDelegate) {
-        self.fetchedResultsController.delegate = delegate
+    init(fetchedResultsController: NSFetchedResultsController<CharacterModel>) {
+        self.fetchedResultsController = fetchedResultsController
+        Self.context = fetchedResultsController.managedObjectContext
     }
     
     func fetchAllCharacters() {
@@ -24,14 +25,5 @@ struct CharacterDataProvider {
         }
     }
     
-    var fetchedResultsController: NSFetchedResultsController<CharacterModel> = {
-        let request = CharacterModel.fetchRequest() as NSFetchRequest<CharacterModel>
-        let sort = NSSortDescriptor(key: "id", ascending: false)
-        request.sortDescriptors = [sort]
-        request.fetchBatchSize = 20
-        
-        print("\n\n\n\(#function) \(context)\n\n\n")
-        
-        return NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-    }()
+    var fetchedResultsController: NSFetchedResultsController<CharacterModel>
 }

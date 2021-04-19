@@ -13,7 +13,7 @@ class CharacterListTVController: UITableViewController {
     @IBAction private func showFilterListButtonClickAction(_ sender: Any) {
         performSegue(withIdentifier: "showFilters", sender: self)
     }
-    
+        
     // MARK: - UITableViewDataSource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.numberOfCharactersToShow ?? 0
@@ -38,7 +38,17 @@ class CharacterListTVController: UITableViewController {
     // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        let characterDataProvider = CharacterDataProvider(delegate: self)
+        
+        let request = CharacterModel.fetchRequest() as NSFetchRequest<CharacterModel>
+        let sort = NSSortDescriptor(key: "id", ascending: false)
+        request.sortDescriptors = [sort]
+        request.fetchBatchSize = 20
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
+        
+        let characterDataProvider = CharacterDataProvider(fetchedResultsController: fetchedResultsController)
+        
         viewModel = CharacterListViewModel(characterDataProvider: characterDataProvider)
         
         tableView.refreshControl = listRefreshControl

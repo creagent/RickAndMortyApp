@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 // Helper struct that handles JSON coding/decoding
 struct JSONHandler {
