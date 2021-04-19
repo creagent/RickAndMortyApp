@@ -13,20 +13,17 @@ struct DatabaseManager {
     static let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     static func save(shouldReset: Bool = false) {
-        if shouldReset {
-            //let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "CharacterModel")
-            //let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//        if shouldReset {
+//            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "CharacterModel")
+//            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 //            DispatchQueue.main.async {
 //                do {
-////                    try (UIApplication.shared.delegate as! AppDelegate).persistentContainer.persistentStoreCoordinator.execute(deleteRequest, with: context)
+//                    try (UIApplication.shared.delegate as! AppDelegate).persistentContainer.persistentStoreCoordinator.execute(deleteRequest, with: context)
 //                } catch {
 //                    print(error)
 //                }
 //            }
-            DispatchQueue.main.async {
-                context.reset()
-            }
-        }
+//        }
         DispatchQueue.main.async {
             do {
                 print("\n\n\n\(#function) \(context)\n\n\n")

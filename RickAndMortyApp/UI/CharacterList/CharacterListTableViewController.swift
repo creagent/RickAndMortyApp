@@ -38,17 +38,7 @@ class CharacterListTVController: UITableViewController {
     // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let request = CharacterModel.fetchRequest() as NSFetchRequest<CharacterModel>
-        let sort = NSSortDescriptor(key: "id", ascending: false)
-        request.sortDescriptors = [sort]
-        request.fetchBatchSize = 20
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController.delegate = self
-        
-        let characterDataProvider = CharacterDataProvider(fetchedResultsController: fetchedResultsController)
-        
+        let characterDataProvider = CharacterDataProvider(delegate: self)
         viewModel = CharacterListViewModel(characterDataProvider: characterDataProvider)
         
         tableView.refreshControl = listRefreshControl
@@ -190,7 +180,7 @@ extension CharacterListTVController: UISearchBarDelegate {
 extension CharacterListTVController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.beginUpdates()
-        viewModel?.getCharactersFromDataProvider()
+        //viewModel?.getCharactersFromDataProvider()
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
@@ -198,7 +188,7 @@ extension CharacterListTVController: NSFetchedResultsControllerDelegate {
         case .insert:
             tableView.insertRows(at: [newIndexPath!], with: .fade)
         case .delete:
-            tableView.deleteRows(at: [indexPath!], with: .fade)
+             tableView.deleteRows(at: [indexPath!], with: .fade)
         case .update:
             tableView.reloadRows(at: [indexPath!], with: .fade)
         case .move:

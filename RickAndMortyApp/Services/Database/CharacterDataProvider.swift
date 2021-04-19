@@ -10,11 +10,24 @@ import CoreData
 import UIKit
 
 struct CharacterDataProvider {
-    static var context: NSManagedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    static var context: NSManagedObjectContext!
     
-    init(fetchedResultsController: NSFetchedResultsController<CharacterModel>) {
-        self.fetchedResultsController = fetchedResultsController
-        Self.context = fetchedResultsController.managedObjectContext
+    init(delegate: NSFetchedResultsControllerDelegate) {
+        fetchedResultsController.delegate = delegate
+        DispatchQueue.main.async {
+            CharacterDataProvider.context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CharacterModel")
+            fetchRequest.returnsObjectsAsFaults = false
+            do {
+                let results = try CharacterDataProvider.context.fetch(fetchRequest)
+                for object in results {
+                    guard let objectData = object as? NSManagedObject else {continue}
+                    CharacterDataProvider.context.delete(objectData)
+                }
+            } catch let error {
+                print("Detele all data in CharacterModel error :", error)
+            }
+        }
     }
     
     func fetchAllCharacters() {
@@ -25,5 +38,12 @@ struct CharacterDataProvider {
         }
     }
     
-    var fetchedResultsController: NSFetchedResultsController<CharacterModel>
+    var fetchedResultsController: NSFetchedResultsController<CharacterModel> = {
+        let request = CharacterModel.fetchRequest() as NSFetchRequest<CharacterModel>
+        let sort = NSSortDescriptor(key: "id", ascending: false)
+        request.sortDescriptors = [sort]
+        request.fetchBatchSize = 20
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        return NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+    }()
 }

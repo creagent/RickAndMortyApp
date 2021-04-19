@@ -15,9 +15,9 @@
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <attribute name="urlString" optional="YES" attributeType="String"/>
-        <relationship name="episodes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EpisodeModel" inverseName="characters" inverseEntity="EpisodeModel"/>
-        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterLocationModel" inverseName="character" inverseEntity="CharacterLocationModel"/>
-        <relationship name="origin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterOriginModel" inverseName="character" inverseEntity="CharacterOriginModel"/>
+        <relationship name="episodes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EpisodeModel" inverseName="characters" inverseEntity="EpisodeModel"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CharacterLocationModel" inverseName="character" inverseEntity="CharacterLocationModel"/>
+        <relationship name="origin" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CharacterOriginModel" inverseName="character" inverseEntity="CharacterOriginModel"/>
     </entity>
     <entity name="CharacterOriginModel" representedClassName="CharacterOriginModel" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>

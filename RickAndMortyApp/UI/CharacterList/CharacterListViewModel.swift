@@ -74,12 +74,15 @@ class CharacterListViewModel {
     // MARK: - Private functions
     private func fetchCharacters(pageNumber: Int, shouldClearDatabase: Bool = false) {
         let getCharacterInfoModelOperation = GetCharactersInfoModelOperation(page: pageNumber, name: searchText, filters: filters, shouldClearDatabase: shouldClearDatabase)
-        let createLoadEpisodesOperation = CreateLoadEpisodesOperation()
-        createLoadEpisodesOperation.addDependency(getCharacterInfoModelOperation)
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
-            self.operationQueue.addOperations([getCharacterInfoModelOperation, createLoadEpisodesOperation], waitUntilFinished: true)
+            self.operationQueue.addOperations([getCharacterInfoModelOperation], waitUntilFinished: true)
             
+            self.characterDataProvider.fetchAllCharacters()
+            self.characters = self.characterDataProvider.fetchedResultsController.fetchedObjects ?? []
+            let createLoadEpisodesOperation = CreateLoadEpisodesOperation(characters: self.characters)
+            self.operationQueue.addOperations([createLoadEpisodesOperation], waitUntilFinished: true)
+
             if (self.searchText == nil || self.searchText == "") && Filter.isDefaultFilters(self.filters) {
                 self.characterDataProvider.fetchAllCharacters()
                 self.characters = self.characterDataProvider.fetchedResultsController.fetchedObjects ?? []

@@ -9,14 +9,12 @@ import Foundation
 
 class CreateLoadEpisodesOperation: Operation {
     // MARK: - Public
+    init(characters: [CharacterModel]) {
+        self.characters = characters
+    }
+    
     override func main() {
-        guard !isCancelled, dependencies.allSatisfy({!$0.isCancelled}) else { return }
-        guard let getCharactersOperation = dependencies.first as? GetCharactersInfoModelOperation else {
-            return
-        }
-        guard let characters = getCharactersOperation.characters else {
-            return
-        }
+        guard !isCancelled else { return }
         print("\n\n\nCreating load episodes operations...\n\n\n")
         let operationQueue = OperationQueue()
         var operations: [Operation] = []
@@ -26,4 +24,6 @@ class CreateLoadEpisodesOperation: Operation {
         }
         operationQueue.addOperations(operations, waitUntilFinished: true)
     }
+    
+    private let characters: [CharacterModel]
 }
